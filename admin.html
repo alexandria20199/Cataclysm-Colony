@@ -1,0 +1,2667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Editorial Desk — Cataclysm Colony
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="theme.js"></script>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+        <a
+            href="index.html"
+            class="brand"
+        >
+
+            <div class="brand-mark">
+                CC
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    Cataclysm Colony
+                </div>
+
+                <div class="brand-tagline">
+                    THE ROBLOX MEME AUTHORITY
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="write.html">
+                Write
+            </a>
+
+            <a
+                href="admin.html"
+                class="active"
+            >
+                Editorial Desk
+            </a>
+
+        </nav>
+
+
+        <div class="header-account">
+
+            <a
+                href="index.html"
+                class="header-login"
+            >
+                Back to site
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     EDITORIAL BAR
+========================================================= -->
+
+<div class="breaking-bar">
+
+    <div class="breaking-inner">
+
+        <span class="breaking-label">
+            EDITORIAL
+        </span>
+
+        <span class="breaking-text">
+            Cataclysm Colony newsroom control center
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     MAIN
+========================================================= -->
+
+<main class="admin-container">
+
+
+    <!-- =====================================================
+         HERO
+    ====================================================== -->
+
+    <section class="admin-hero">
+
+        <div class="admin-hero-copy">
+
+            <div class="section-kicker">
+                Cataclysm Colony NEWSROOM
+            </div>
+
+            <h1>
+                Editorial Desk
+            </h1>
+
+            <p>
+                Review submissions, publish stories, and manage
+                the Cataclysm Colony community.
+            </p>
+
+        </div>
+
+
+        <div class="admin-status">
+
+            <span class="admin-status-dot"></span>
+
+            <span>
+                System online
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         DASHBOARD OVERVIEW
+    ====================================================== -->
+
+    <section class="admin-overview">
+
+
+        <div class="overview-card overview-primary">
+
+            <div class="overview-card-top">
+
+                <span class="overview-label">
+                    PENDING REVIEW
+                </span>
+
+                <span class="overview-icon">
+                    !
+                </span>
+
+            </div>
+
+
+            <strong
+                id="pendingCount"
+                class="overview-number"
+            >
+                —
+            </strong>
+
+
+            <span class="overview-description">
+                Stories waiting for editorial action
+            </span>
+
+        </div>
+
+
+        <div class="overview-card">
+
+            <div class="overview-card-top">
+
+                <span class="overview-label">
+                    REGISTERED USERS
+                </span>
+
+                <span class="overview-icon">
+                    @
+                </span>
+
+            </div>
+
+
+            <strong
+                id="userCount"
+                class="overview-number"
+            >
+                —
+            </strong>
+
+
+            <span class="overview-description">
+                Accounts in the Cataclysm Colony community
+            </span>
+
+        </div>
+
+
+        <div class="overview-card">
+
+            <div class="overview-card-top">
+
+                <span class="overview-label">
+                    ADMINISTRATORS
+                </span>
+
+                <span class="overview-icon">
+                    #
+                </span>
+
+            </div>
+
+
+            <strong
+                id="adminCount"
+                class="overview-number"
+            >
+                —
+            </strong>
+
+
+            <span class="overview-description">
+                Protected editorial accounts
+            </span>
+
+        </div>
+
+
+    </section>
+
+
+    <!-- =====================================================
+         GLOBAL MESSAGE
+    ====================================================== -->
+
+    <div
+        id="adminMessage"
+        class="admin-message"
+    ></div>
+
+
+    <section
+        id="announcementSection"
+        class="admin-section announcement-section"
+        hidden
+    >
+
+        <div class="admin-section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    OWNER BROADCAST
+                </span>
+
+                <h2>
+                    Notify the whole newsroom
+                </h2>
+
+                <p>
+                    Send a custom update to every registered
+                    Cataclysm Colony account.
+                </p>
+
+            </div>
+
+        </div>
+
+
+        <form id="announcementForm" class="announcement-form">
+
+            <label>
+                <span>Announcement title</span>
+                <input
+                    id="announcementTitle"
+                    maxlength="120"
+                    required
+                    placeholder="Newsroom update"
+                >
+            </label>
+
+            <label>
+                <span>Message</span>
+                <textarea
+                    id="announcementMessage"
+                    maxlength="1000"
+                    required
+                    placeholder="Share an important update with everyone..."
+                ></textarea>
+            </label>
+
+            <button class="approve-button" type="submit">
+                Send to everyone
+            </button>
+
+        </form>
+
+    </section>
+
+
+    <!-- =====================================================
+         HOMEPAGE CURATION
+    ====================================================== -->
+
+    <section class="admin-section homepage-curation-section">
+
+        <div class="admin-section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    FRONT PAGE
+                </span>
+
+                <h2>
+                    Homepage Curation
+                </h2>
+
+                <p>
+                    Choose the one featured story and the approved
+                    articles that appear in the homepage card grid.
+                </p>
+
+            </div>
+
+
+            <button
+                id="refreshHomepageButton"
+                class="admin-refresh"
+                type="button"
+            >
+                Refresh Homepage
+            </button>
+
+        </div>
+
+
+        <div
+            id="homepageCurationList"
+            class="homepage-curation-list"
+        >
+
+            <div class="admin-loading">
+
+                <div class="admin-spinner"></div>
+
+                <p>
+                    Loading homepage controls...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         SUBMISSIONS
+    ====================================================== -->
+
+    <section class="admin-section">
+
+
+        <div class="admin-section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    NEWSROOM
+                </span>
+
+                <h2>
+                    Submission Queue
+                </h2>
+
+                <p>
+                    Review incoming stories before they become
+                    part of the Cataclysm Colony homepage.
+                </p>
+
+            </div>
+
+
+            <button
+                id="refreshButton"
+                class="admin-refresh"
+                type="button"
+            >
+                Refresh Queue
+            </button>
+
+        </div>
+
+
+        <div
+            id="submissionList"
+            class="submission-list"
+        >
+
+            <div class="admin-loading">
+
+                <div class="admin-spinner"></div>
+
+                <p>
+                    Loading submissions...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         ARTICLE ARCHIVE
+    ====================================================== -->
+
+    <section class="admin-section article-archive-section">
+
+        <div class="admin-section-heading">
+            <div>
+                <span class="section-kicker">EDITORIAL ARCHIVE</span>
+                <h2>All Articles</h2>
+                <p>Searchable newsroom record. Permanent deletion is reserved for the owner account.</p>
+            </div>
+
+            <button id="refreshArticleArchiveButton" class="admin-refresh" type="button">
+                Refresh Articles
+            </button>
+        </div>
+
+        <div id="articleArchiveList" class="article-archive-list">
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                <p>Loading articles...</p>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
+         USER MANAGEMENT
+    ====================================================== -->
+
+    <section class="admin-section user-management-section">
+
+
+        <div class="admin-section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    COMMUNITY
+                </span>
+
+                <h2>
+                    User Management
+                </h2>
+
+                <p>
+                    Manage registered Cataclysm Colony accounts.
+                    Administrators and the owner remain protected
+                    according to their role.
+                </p>
+
+            </div>
+
+
+            <button
+                id="refreshUsersButton"
+                class="admin-refresh"
+                type="button"
+            >
+                Refresh Users
+            </button>
+
+        </div>
+
+
+        <!-- USER STATS -->
+
+        <div class="admin-overview user-management-summary">
+
+
+            <div class="overview-card">
+
+                <div class="overview-card-top">
+
+                    <span class="overview-label">
+                        ALL USERS
+                    </span>
+
+                    <span class="overview-icon">
+                        U
+                    </span>
+
+                </div>
+
+
+                <strong
+                    id="managementUserCount"
+                    class="overview-number"
+                >
+                    —
+                </strong>
+
+
+                <span class="overview-description">
+                    Registered accounts
+                </span>
+
+            </div>
+
+
+            <div class="overview-card">
+
+                <div class="overview-card-top">
+
+                    <span class="overview-label">
+                        ADMINISTRATORS
+                    </span>
+
+                    <span class="overview-icon">
+                        A
+                    </span>
+
+                </div>
+
+
+                <strong
+                    id="managementAdminCount"
+                    class="overview-number"
+                >
+                    —
+                </strong>
+
+
+                <span class="overview-description">
+                    Admin and owner accounts
+                </span>
+
+            </div>
+
+
+            <div class="overview-card">
+
+                <div class="overview-card-top">
+
+                    <span class="overview-label">
+                        NORMAL USERS
+                    </span>
+
+                    <span class="overview-icon">
+                        N
+                    </span>
+
+                </div>
+
+
+                <strong
+                    id="normalUserCount"
+                    class="overview-number"
+                >
+                    —
+                </strong>
+
+
+                <span class="overview-description">
+                    Community accounts
+                </span>
+
+            </div>
+
+
+        </div>
+
+
+        <!-- USER LIST -->
+
+        <div
+            id="userList"
+            class="user-list"
+        >
+
+            <div class="admin-loading">
+
+                <div class="admin-spinner"></div>
+
+                <p>
+                    Loading accounts...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+</main>
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="site-footer">
+
+    <div class="footer-inner">
+
+        <div>
+
+            <strong>
+                Cataclysm Colony
+            </strong>
+
+            <p>
+                The Roblox Meme Authority.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="write.html">
+                Write
+            </a>
+
+            <a href="profile.html">
+                Profile
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        © 2026 Cataclysm Colony.
+        All rights reserved under Amber.
+
+    </div>
+
+</footer>
+
+
+<script>
+
+/* ============================================================
+   ELEMENTS
+============================================================ */
+
+const submissionList =
+    document.getElementById("submissionList");
+
+const pendingCount =
+    document.getElementById("pendingCount");
+
+const adminMessage =
+    document.getElementById("adminMessage");
+
+const refreshButton =
+    document.getElementById("refreshButton");
+
+const userList =
+    document.getElementById("userList");
+
+const userCount =
+    document.getElementById("userCount");
+
+const managementUserCount =
+    document.getElementById("managementUserCount");
+
+const managementAdminCount =
+    document.getElementById("managementAdminCount");
+
+const normalUserCount =
+    document.getElementById("normalUserCount");
+
+const adminCount =
+    document.getElementById("adminCount");
+
+const refreshUsersButton =
+    document.getElementById("refreshUsersButton");
+
+const articleArchiveList =
+    document.getElementById("articleArchiveList");
+
+let editorialUser = null;
+
+const announcementSection =
+    document.getElementById("announcementSection");
+
+const announcementForm =
+    document.getElementById("announcementForm");
+
+const announcementTitle =
+    document.getElementById("announcementTitle");
+
+const announcementMessage =
+    document.getElementById("announcementMessage");
+
+
+/* ============================================================
+   MESSAGE
+============================================================ */
+
+function showMessage(message, type = "") {
+
+    adminMessage.textContent = message;
+
+    adminMessage.className =
+        "admin-message";
+
+    if (type) {
+
+        adminMessage.classList.add(type);
+
+    }
+
+}
+
+
+/* ============================================================
+   ESCAPE HTML
+============================================================ */
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+
+    }
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+
+/* ============================================================
+   ESCAPE JAVASCRIPT
+============================================================ */
+
+function escapeJS(value) {
+
+    return String(value || "")
+
+        .replace(/\\/g, "\\\\")
+
+        .replace(/'/g, "\\'")
+
+        .replace(/"/g, '\\"')
+
+        .replace(/\r?\n/g, "\\n");
+
+}
+
+
+/* ============================================================
+   FORMAT DATE
+============================================================ */
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+
+        return "Unknown date";
+
+    }
+
+    const normalized =
+        String(dateString)
+            .replace(" ", "T");
+
+    const date =
+        new Date(
+            normalized.endsWith("Z")
+                ? normalized
+                : normalized + "Z"
+        );
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return dateString;
+
+    }
+
+    return date.toLocaleString(
+        undefined,
+        {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }
+    );
+
+}
+
+
+/* ============================================================
+   LOAD SUBMISSIONS
+============================================================ */
+
+async function loadSubmissions() {
+
+    submissionList.innerHTML = `
+
+        <div class="admin-loading">
+
+            <div class="admin-spinner"></div>
+
+            <p>
+                Loading submissions...
+            </p>
+
+        </div>
+
+    `;
+
+    pendingCount.textContent = "—";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/articles"
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        if (response.status === 403) {
+
+            renderAccessDenied();
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not load submissions."
+            );
+
+        }
+
+
+        pendingCount.textContent =
+            data.length;
+
+
+        if (!data.length) {
+
+            renderEmpty();
+
+            return;
+
+        }
+
+
+        renderSubmissions(data);
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "ADMIN LOAD ERROR:",
+            error
+        );
+
+        pendingCount.textContent =
+            "—";
+
+
+        submissionList.innerHTML = `
+
+            <div class="admin-empty error-state">
+
+                <div class="empty-icon">
+                    !
+                </div>
+
+                <h3>
+                    Could not load submissions
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
+
+                <button
+                    class="admin-refresh"
+                    type="button"
+                    onclick="loadSubmissions()"
+                >
+                    Try again
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* ============================================================
+   RENDER SUBMISSIONS
+============================================================ */
+
+function renderSubmissions(articles) {
+
+    submissionList.innerHTML =
+        articles
+            .map(createSubmissionCard)
+            .join("");
+
+}
+
+
+/* ============================================================
+   CREATE SUBMISSION CARD
+============================================================ */
+
+function createSubmissionCard(article) {
+
+    const imageHTML =
+        article.image
+            ? `
+
+                <div class="submission-image">
+
+                    <img
+                        src="${escapeHTML(article.image)}"
+                        alt=""
+                    >
+
+                </div>
+
+            `
+            : `
+
+                <div class="submission-image no-image">
+
+                    <span>
+                        CC
+                    </span>
+
+                </div>
+
+            `;
+
+
+    const verifiedBadge =
+        article.is_verified
+            ? `
+                <span class="verification-badge">
+                    ✓
+                </span>
+            `
+            : "";
+
+
+    const tags =
+        article.tags
+            ? article.tags
+                .split(",")
+                .map(tag => tag.trim())
+                .filter(Boolean)
+                .map(tag => `
+
+                    <span class="submission-tag">
+                        #${escapeHTML(tag)}
+                    </span>
+
+                `)
+                .join("")
+            : "";
+
+
+    return `
+
+        <article
+            class="submission-card"
+            data-id="${article.id}"
+        >
+
+
+            ${imageHTML}
+
+
+            <div class="submission-content">
+
+
+                <div class="submission-topline">
+
+                    <span class="submission-status">
+                        PENDING REVIEW
+                    </span>
+
+                    <span class="submission-date">
+                        ${formatDate(
+                            article.submitted_at
+                        )}
+                    </span>
+
+                </div>
+
+
+                <div class="submission-category">
+
+                    ${escapeHTML(
+                        article.category ||
+                        "UNCATEGORIZED"
+                    )}
+
+                </div>
+
+
+                <h3 class="submission-headline">
+
+                    ${escapeHTML(
+                        article.headline ||
+                        "Untitled article"
+                    )}
+
+                </h3>
+
+
+                ${
+                    article.summary
+                        ? `
+
+                            <p class="submission-summary">
+
+                                ${escapeHTML(
+                                    article.summary
+                                )}
+
+                            </p>
+
+                        `
+                        : ""
+                }
+
+
+                <div class="submission-author">
+
+
+                    <div class="submission-avatar">
+
+                        ${
+                            article.profile_picture
+                                ? `
+
+                                    <img
+                                        src="${escapeHTML(
+                                            article.profile_picture
+                                        )}"
+                                        alt=""
+                                    >
+
+                                `
+                                : `
+
+                                    <span>
+
+                                        ${escapeHTML(
+                                            (
+                                                article.username ||
+                                                "?"
+                                            )
+                                                .charAt(0)
+                                                .toUpperCase()
+                                        )}
+
+                                    </span>
+
+                                `
+                        }
+
+                    </div>
+
+
+                    <div>
+
+                        <strong>
+
+                            ${escapeHTML(
+                                article.username ||
+                                "Unknown reporter"
+                            )}
+
+                            ${verifiedBadge}
+
+                        </strong>
+
+                        <span>
+                            Reporter
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                ${
+                    tags
+                        ? `
+
+                            <div class="submission-tags">
+
+                                ${tags}
+
+                            </div>
+
+                        `
+                        : ""
+                }
+
+
+                <details class="submission-preview">
+
+                    <summary>
+                        Read full article
+                    </summary>
+
+
+                    <div class="article-preview-body">
+
+                        ${article.body || ""}
+
+                    </div>
+
+                </details>
+
+
+                <div class="submission-actions">
+
+
+                    <button
+                        class="approve-button"
+                        type="button"
+                        onclick="approveArticle(
+                            ${article.id},
+                            this
+                        )"
+                    >
+                        ✓ Approve & Publish
+                    </button>
+
+
+                    <button
+                        class="reject-button"
+                        type="button"
+                        onclick="openReject(
+                            ${article.id}
+                        )"
+                    >
+                        Reject
+                    </button>
+
+                </div>
+
+
+                <div
+                    id="reject-${article.id}"
+                    class="reject-panel"
+                >
+
+
+                    <label
+                        for="reason-${article.id}"
+                    >
+                        Reason for rejection
+                    </label>
+
+
+                    <textarea
+                        id="reason-${article.id}"
+                        maxlength="1000"
+                        placeholder="Explain what the reporter needs to change..."
+                    ></textarea>
+
+
+                    <div class="reject-actions">
+
+
+                        <button
+                            class="cancel-reject"
+                            type="button"
+                            onclick="closeReject(
+                                ${article.id}
+                            )"
+                        >
+                            Cancel
+                        </button>
+
+
+                        <button
+                            class="confirm-reject"
+                            type="button"
+                            onclick="rejectArticle(
+                                ${article.id},
+                                this
+                            )"
+                        >
+                            Reject article
+                        </button>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+/* ============================================================
+   EMPTY SUBMISSIONS
+============================================================ */
+
+function renderEmpty() {
+
+    submissionList.innerHTML = `
+
+        <div class="admin-empty">
+
+            <div class="empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                The desk is clear.
+            </h3>
+
+            <p>
+                There are no articles waiting for editorial review.
+            </p>
+
+            <button
+                class="admin-refresh"
+                type="button"
+                onclick="loadSubmissions()"
+            >
+                Refresh submissions
+            </button>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   ACCESS DENIED
+============================================================ */
+
+function renderAccessDenied() {
+
+    pendingCount.textContent =
+        "—";
+
+
+    submissionList.innerHTML = `
+
+        <div class="admin-empty error-state">
+
+            <div class="empty-icon">
+                ×
+            </div>
+
+            <h3>
+                Editorial access required.
+            </h3>
+
+            <p>
+                This area is restricted to Cataclysm Colony administrators.
+            </p>
+
+            <a
+                href="index.html"
+                class="admin-refresh"
+            >
+                Return home
+            </a>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   REJECTION PANEL
+============================================================ */
+
+function openReject(id) {
+
+    const panel =
+        document.getElementById(
+            `reject-${id}`
+        );
+
+
+    if (!panel) {
+
+        return;
+
+    }
+
+
+    panel.classList.add("open");
+
+
+    const textarea =
+        document.getElementById(
+            `reason-${id}`
+        );
+
+
+    if (textarea) {
+
+        textarea.focus();
+
+    }
+
+}
+
+
+function closeReject(id) {
+
+    const panel =
+        document.getElementById(
+            `reject-${id}`
+        );
+
+
+    if (!panel) {
+
+        return;
+
+    }
+
+
+    panel.classList.remove("open");
+
+}
+
+
+/* ============================================================
+   APPROVE ARTICLE
+============================================================ */
+
+async function approveArticle(
+    id,
+    button
+) {
+
+    if (
+        !confirm(
+            "Approve this article and publish it?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Publishing...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/articles/${id}/approve`,
+                {
+                    method: "POST"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not approve article."
+            );
+
+        }
+
+
+        showMessage(
+            "Article approved and published.",
+            "success"
+        );
+
+
+        await loadSubmissions();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "APPROVE ERROR:",
+            error
+        );
+
+
+        button.disabled = false;
+
+        button.textContent =
+            "✓ Approve & Publish";
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   REJECT ARTICLE
+============================================================ */
+
+async function rejectArticle(
+    id,
+    button
+) {
+
+    const textarea =
+        document.getElementById(
+            `reason-${id}`
+        );
+
+
+    const reason =
+        textarea
+            ? textarea.value.trim()
+            : "";
+
+
+    if (!reason) {
+
+        showMessage(
+            "Please provide a rejection reason.",
+            "error"
+        );
+
+
+        if (textarea) {
+
+            textarea.focus();
+
+        }
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Rejecting...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/articles/${id}/reject`,
+                {
+
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+                        reason
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not reject article."
+            );
+
+        }
+
+
+        showMessage(
+            "Article rejected.",
+            "success"
+        );
+
+
+        await loadSubmissions();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "REJECT ERROR:",
+            error
+        );
+
+
+        button.disabled = false;
+
+        button.textContent =
+            "Reject article";
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   DELETE ARTICLE
+============================================================ */
+
+async function loadArticleArchive() {
+
+    if (!articleArchiveList) {
+        return;
+    }
+
+    articleArchiveList.innerHTML = `
+        <div class="admin-loading">
+            <div class="admin-spinner"></div>
+            <p>Loading articles...</p>
+        </div>
+    `;
+
+    try {
+
+        const [userResponse, articlesResponse] = await Promise.all([
+            fetch("/api/me"),
+            fetch("/api/admin/all-articles")
+        ]);
+
+        if (userResponse.status === 401 || articlesResponse.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const user = await userResponse.json();
+        const articles = await articlesResponse.json();
+
+        if (!userResponse.ok || !articlesResponse.ok) {
+            throw new Error(articles.error || user.error || "Could not load the article archive.");
+        }
+
+        editorialUser = user;
+
+        if (!articles.length) {
+            articleArchiveList.innerHTML = `
+                <div class="admin-empty">
+                    <div class="empty-icon">—</div>
+                    <h3>No articles in the archive.</h3>
+                </div>
+            `;
+            return;
+        }
+
+        articleArchiveList.innerHTML = articles.map(article => `
+            <article class="article-archive-row">
+                <div>
+                    <span class="article-archive-status">${escapeHTML(article.status || "draft")}</span>
+                    <span class="submission-category">${escapeHTML(article.category || "newsroom")}</span>
+                    <h3><a href="article.html?id=${encodeURIComponent(article.id)}">${escapeHTML(article.headline || "Untitled article")}</a></h3>
+                    <p>By ${escapeHTML(article.username || "Unknown reporter")} · ${escapeHTML(formatDate(article.published_at || article.created_at))}</p>
+                </div>
+                ${editorialUser.role === "owner" ? `
+                    <button class="delete-article-button owner-delete-button" type="button" onclick="deleteArticle(${article.id}, this)">
+                        Owner delete
+                    </button>
+                ` : ""}
+            </article>
+        `).join("");
+
+    } catch (error) {
+
+        console.error("ARTICLE ARCHIVE ERROR:", error);
+        articleArchiveList.innerHTML = `
+            <div class="admin-empty error-state">
+                <div class="empty-icon">!</div>
+                <h3>Could not load articles.</h3>
+                <p>${escapeHTML(error.message)}</p>
+                <button class="admin-refresh" type="button" onclick="loadArticleArchive()">Try again</button>
+            </div>
+        `;
+    }
+}
+
+
+async function loadAnnouncementAccess() {
+
+    if (!announcementSection) {
+        return;
+    }
+
+    try {
+
+        const response = await fetch("/api/me");
+
+        if (!response.ok) {
+            return;
+        }
+
+        const user = await response.json();
+
+        announcementSection.hidden = user.role !== "owner";
+
+    } catch (error) {
+
+        console.error("ANNOUNCEMENT ACCESS ERROR:", error);
+    }
+}
+
+
+async function sendAnnouncement(event) {
+
+    event.preventDefault();
+
+    const submitButton = announcementForm?.querySelector("button[type='submit']");
+
+    if (!announcementTitle.value.trim() || !announcementMessage.value.trim()) {
+        showMessage("Add both an announcement title and message.", "error");
+        return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Sending...";
+
+    try {
+
+        const response = await fetch("/api/owner/announcements", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                title: announcementTitle.value.trim(),
+                message: announcementMessage.value.trim()
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Could not send the announcement.");
+        }
+
+        announcementForm.reset();
+        showMessage(data.message || "Announcement sent.", "success");
+
+    } catch (error) {
+
+        console.error("SEND ANNOUNCEMENT ERROR:", error);
+        showMessage(error.message, "error");
+
+    } finally {
+
+        submitButton.disabled = false;
+        submitButton.textContent = "Send to everyone";
+    }
+}
+
+
+async function deleteArticle(
+    id,
+    button
+) {
+
+    if (
+        !confirm(
+            "Delete this article permanently?\n\n" +
+            "This action cannot be undone."
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Deleting...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/articles/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not delete article."
+            );
+
+        }
+
+
+        showMessage(
+            "Article deleted permanently.",
+            "success"
+        );
+
+
+        await loadSubmissions();
+        await loadArticleArchive();
+        await loadHomepageCuration();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "DELETE ARTICLE ERROR:",
+            error
+        );
+
+
+        button.disabled = false;
+
+        button.textContent =
+            "Delete";
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   LOAD USERS
+============================================================ */
+
+async function loadUsers() {
+
+    userList.innerHTML = `
+
+        <div class="admin-loading">
+
+            <div class="admin-spinner"></div>
+
+            <p>
+                Loading accounts...
+            </p>
+
+        </div>
+
+    `;
+
+
+    userCount.textContent = "—";
+
+    managementUserCount.textContent = "—";
+
+    managementAdminCount.textContent = "—";
+
+    adminCount.textContent = "—";
+
+    normalUserCount.textContent = "—";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/admin/users"
+            );
+
+
+        if (response.status === 401) {
+
+            window.location.href =
+                "login.html";
+
+            return;
+
+        }
+
+
+        if (response.status === 403) {
+
+            renderUserAccessDenied();
+
+            return;
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not load users."
+            );
+
+        }
+
+
+        /*
+         * server.js returns:
+         *
+         * {
+         *     current_user_id,
+         *     users
+         * }
+         */
+
+        const users =
+            Array.isArray(data)
+                ? data
+                : data.users || [];
+
+
+        const total =
+            users.length;
+
+
+        const admins =
+            users.filter(
+                user =>
+                    user.role === "owner" ||
+                    user.role === "admin" ||
+                    user.is_admin === 1
+            ).length;
+
+
+        const normalUsers =
+            total - admins;
+
+
+        userCount.textContent =
+            total;
+
+        managementUserCount.textContent =
+            total;
+
+        managementAdminCount.textContent =
+            admins;
+
+        adminCount.textContent =
+            admins;
+
+        normalUserCount.textContent =
+            normalUsers;
+
+
+        if (!users.length) {
+
+            renderNoUsers();
+
+            return;
+
+        }
+
+
+        renderUsers(users);
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "USER LOAD ERROR:",
+            error
+        );
+
+
+        userList.innerHTML = `
+
+            <div class="admin-empty error-state">
+
+                <div class="empty-icon">
+                    !
+                </div>
+
+                <h3>
+                    Could not load accounts
+                </h3>
+
+                <p>
+                    ${escapeHTML(
+                        error.message
+                    )}
+                </p>
+
+                <button
+                    class="admin-refresh"
+                    type="button"
+                    onclick="loadUsers()"
+                >
+                    Try again
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+/* ============================================================
+   RENDER USERS
+============================================================ */
+
+function renderUsers(users) {
+
+    userList.innerHTML =
+        users
+            .map(createUserCard)
+            .join("");
+
+}
+
+
+/* ============================================================
+   USER CARD
+============================================================ */
+
+function createUserCard(user) {
+
+    const isOwner =
+        user.role === "owner";
+
+
+    const isAdmin =
+        user.role === "admin" ||
+        user.is_admin === 1;
+
+
+    const isVerified =
+        user.is_verified === 1;
+
+
+    const avatar =
+        user.profile_picture
+            ? `
+
+                <img
+                    src="${escapeHTML(
+                        user.profile_picture
+                    )}"
+                    alt=""
+                >
+
+            `
+            : `
+
+                <span>
+
+                    ${escapeHTML(
+                        (
+                            user.username ||
+                            "?"
+                        )
+                            .charAt(0)
+                            .toUpperCase()
+                    )}
+
+                </span>
+
+            `;
+
+
+    let roleHTML = "";
+
+
+    if (isOwner) {
+
+        roleHTML = `
+
+            <span class="user-role-badge owner">
+                OWNER
+            </span>
+
+        `;
+
+    }
+
+    else if (isAdmin) {
+
+        roleHTML = `
+
+            <span class="user-role-badge admin">
+                ADMINISTRATOR
+            </span>
+
+        `;
+
+    }
+
+    else {
+
+        roleHTML = `
+
+            <span class="user-role-badge">
+                NORMAL USER
+            </span>
+
+        `;
+
+    }
+
+
+    if (isVerified) {
+
+        roleHTML += `
+
+            <span class="user-verified-badge">
+                ✓ VERIFIED
+            </span>
+
+        `;
+
+    }
+
+
+    let actionHTML = "";
+
+
+    if (isOwner) {
+
+        actionHTML = `
+
+            <span class="user-protected">
+                Protected owner
+            </span>
+
+        `;
+
+    }
+
+    else if (isAdmin) {
+
+        actionHTML = `
+
+            <span class="user-protected">
+                Protected administrator
+            </span>
+
+        `;
+
+    }
+
+    else {
+
+        actionHTML = `
+
+            <button
+                class="delete-user-button"
+                type="button"
+                onclick="deleteUser(
+                    ${user.id},
+                    '${escapeJS(
+                        user.username
+                    )}',
+                    this
+                )"
+            >
+                Delete account
+            </button>
+
+        `;
+
+    }
+
+
+    return `
+
+        <article
+            class="user-card"
+            data-user-id="${user.id}"
+        >
+
+
+            <div class="user-card-main">
+
+
+                <div class="user-card-avatar">
+
+                    ${avatar}
+
+                </div>
+
+
+                <div class="user-card-information">
+
+
+                    <div class="user-card-name-row">
+
+                        <h3>
+                            ${escapeHTML(
+                                user.username ||
+                                "Unknown user"
+                            )}
+                        </h3>
+
+
+                        <div class="user-badges">
+
+                            ${roleHTML}
+
+                        </div>
+
+                    </div>
+
+
+                    <p class="user-email">
+
+                        ${escapeHTML(
+                            user.email ||
+                            ""
+                        )}
+
+                    </p>
+
+
+                    <div class="user-meta">
+
+                        <span>
+                            Joined
+                            ${formatDate(
+                                user.created_at
+                            )}
+                        </span>
+
+
+                        <span>
+                            Account #${user.id}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="user-card-action">
+
+                    ${actionHTML}
+
+                </div>
+
+
+            </div>
+
+        </article>
+
+    `;
+
+}
+
+
+/* ============================================================
+   DELETE USER
+============================================================ */
+
+async function deleteUser(
+    id,
+    username,
+    button
+) {
+
+    const confirmed =
+        confirm(
+            `Delete the account "${username}"?\n\n` +
+            `This will permanently delete the user's account ` +
+            `and associated content.\n\n` +
+            `THIS CANNOT BE UNDONE.`
+        );
+
+
+    if (!confirmed) {
+
+        return;
+
+    }
+
+
+    button.disabled = true;
+
+    button.textContent =
+        "Deleting...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/admin/users/${id}`,
+                {
+                    method: "DELETE"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not delete user."
+            );
+
+        }
+
+
+        showMessage(
+            data.message ||
+            "User deleted.",
+            "success"
+        );
+
+
+        await loadUsers();
+
+        await loadSubmissions();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "DELETE USER ERROR:",
+            error
+        );
+
+
+        button.disabled = false;
+
+        button.textContent =
+            "Delete account";
+
+
+        showMessage(
+            error.message,
+            "error"
+        );
+
+    }
+
+}
+
+
+/* ============================================================
+   NO USERS
+============================================================ */
+
+function renderNoUsers() {
+
+    userList.innerHTML = `
+
+        <div class="admin-empty">
+
+            <div class="empty-icon">
+                ✓
+            </div>
+
+            <h3>
+                No accounts found.
+            </h3>
+
+            <p>
+                There are currently no registered users.
+            </p>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   USER ACCESS DENIED
+============================================================ */
+
+function renderUserAccessDenied() {
+
+    userList.innerHTML = `
+
+        <div class="admin-empty error-state">
+
+            <div class="empty-icon">
+                ×
+            </div>
+
+            <h3>
+                Administrator access required.
+            </h3>
+
+            <p>
+                User management is restricted to Cataclysm Colony administrators.
+            </p>
+
+            <a
+                href="index.html"
+                class="admin-refresh"
+            >
+                Return home
+            </a>
+
+        </div>
+
+    `;
+
+}
+
+
+/* ============================================================
+   HOMEPAGE CURATION
+============================================================ */
+
+async function loadHomepageCuration() {
+
+    const list = document.getElementById("homepageCurationList");
+
+    if (!list) {
+        return;
+    }
+
+    list.innerHTML = `
+        <div class="admin-loading">
+            <div class="admin-spinner"></div>
+            <p>Loading homepage controls...</p>
+        </div>
+    `;
+
+    try {
+
+        const response = await fetch("/api/admin/all-articles");
+
+        if (response.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        if (response.status === 403) {
+            throw new Error("Administrator access is required to curate the homepage.");
+        }
+
+        const articles = await response.json();
+
+        if (!response.ok) {
+            throw new Error(articles.error || "Could not load homepage controls.");
+        }
+
+        const approvedArticles = articles.filter(
+            article => article.status === "approved"
+        );
+
+        if (!approvedArticles.length) {
+            list.innerHTML = `
+                <div class="admin-empty">
+                    <div class="empty-icon">—</div>
+                    <h3>No approved stories yet.</h3>
+                    <p>Approve a submission before placing it on the homepage.</p>
+                </div>
+            `;
+            return;
+        }
+
+        list.innerHTML = approvedArticles.map(article => `
+            <article class="homepage-curation-card">
+                <div class="homepage-curation-copy">
+                    <div class="homepage-curation-flags">
+                        ${article.featured ? '<span class="curation-flag featured">FEATURED</span>' : ''}
+                        ${article.homepage_card ? '<span class="curation-flag">HOMEPAGE CARD</span>' : ''}
+                    </div>
+                    <div class="submission-category">
+                        ${escapeHTML(article.category || "NEWSROOM")}
+                    </div>
+                    <h3>${escapeHTML(article.headline || "Untitled story")}</h3>
+                    <p>By ${escapeHTML(article.username || "Unknown reporter")}</p>
+                </div>
+                <div class="homepage-curation-actions">
+                    <button
+                        class="${article.featured ? 'curation-button selected' : 'curation-button'}"
+                        type="button"
+                        onclick="setFeatured(${article.id}, ${article.featured ? 'false' : 'true'})"
+                    >
+                        ${article.featured ? 'Remove Featured' : 'Make Featured'}
+                    </button>
+                    <button
+                        class="${article.homepage_card ? 'curation-button selected' : 'curation-button'}"
+                        type="button"
+                        onclick="setHomepageCard(${article.id}, ${article.homepage_card ? 'false' : 'true'})"
+                    >
+                        ${article.homepage_card ? 'Remove Card' : 'Add Homepage Card'}
+                    </button>
+                </div>
+            </article>
+        `).join("");
+
+    } catch (error) {
+
+        console.error("HOMEPAGE CURATION ERROR:", error);
+
+        list.innerHTML = `
+            <div class="admin-empty error-state">
+                <div class="empty-icon">!</div>
+                <h3>Could not load homepage controls.</h3>
+                <p>${escapeHTML(error.message)}</p>
+                <button class="admin-refresh" type="button" onclick="loadHomepageCuration()">Try again</button>
+            </div>
+        `;
+
+    }
+
+}
+
+
+async function updateHomepagePlacement(id, endpoint, method, successMessage) {
+
+    try {
+
+        const response = await fetch(endpoint, { method });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Could not update homepage placement.");
+        }
+
+        showMessage(data.message || successMessage, "success");
+        await loadHomepageCuration();
+
+    } catch (error) {
+
+        console.error("HOMEPAGE PLACEMENT ERROR:", error);
+        showMessage(error.message, "error");
+
+    }
+
+}
+
+
+function setFeatured(id, shouldFeature) {
+
+    return updateHomepagePlacement(
+        id,
+        `/api/admin/articles/${id}/feature`,
+        shouldFeature ? "POST" : "DELETE",
+        shouldFeature ? "Article is now featured." : "Featured article removed."
+    );
+
+}
+
+
+function setHomepageCard(id, shouldShow) {
+
+    return updateHomepagePlacement(
+        id,
+        `/api/admin/articles/${id}/homepage`,
+        shouldShow ? "POST" : "DELETE",
+        shouldShow ? "Article added to homepage cards." : "Article removed from homepage cards."
+    );
+
+}
+
+
+/* ============================================================
+   REFRESH
+============================================================ */
+
+refreshButton.addEventListener(
+    "click",
+    loadSubmissions
+);
+
+
+refreshUsersButton.addEventListener(
+    "click",
+    loadUsers
+);
+
+
+document.getElementById("refreshHomepageButton")?.addEventListener(
+    "click",
+    loadHomepageCuration
+);
+
+document.getElementById("refreshArticleArchiveButton")?.addEventListener(
+    "click",
+    loadArticleArchive
+);
+
+announcementForm?.addEventListener("submit", sendAnnouncement);
+
+
+/* ============================================================
+   INITIAL LOAD
+============================================================ */
+
+loadSubmissions();
+
+loadUsers();
+
+loadHomepageCuration();
+
+loadArticleArchive();
+
+loadAnnouncementAccess();
+
+</script>
+
+
+<script src="notifications.js"></script>
+</body>
+
+</html>

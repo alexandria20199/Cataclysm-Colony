@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Profile — Cataclysm Colony</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="theme.js"></script>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+
+        <!-- BRAND -->
+
+        <a
+            href="index.html"
+            class="brand"
+        >
+
+            <div class="brand-mark">
+                CC
+            </div>
+
+
+            <div>
+
+                <div class="brand-name">
+                    Cataclysm Colony
+                </div>
+
+                <div class="brand-tagline">
+                    THE ROBLOX MEME AUTHORITY
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <!-- NAVIGATION -->
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="write.html">
+                Write
+            </a>
+
+            <a href="#">
+                Trending
+            </a>
+
+            <a href="#">
+                Communities
+            </a>
+
+        </nav>
+
+
+        <!-- ACCOUNT -->
+
+        <div
+            class="header-account"
+            id="accountArea"
+        >
+
+            <a
+                href="login.html"
+                class="header-login"
+            >
+                Log in
+            </a>
+
+            <a
+                href="register.html"
+                class="header-register"
+            >
+                Join
+            </a>
+
+        </div>
+
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     BREAKING BAR
+========================================================= -->
+
+<div class="breaking-bar">
+
+    <div class="breaking-inner">
+
+        <span class="breaking-label">
+            CATACLYSM
+        </span>
+
+        <span class="breaking-text">
+            Welcome to the Roblox Meme Authority.
+        </span>
+
+    </div>
+
+</div>
+
+
+
+<!-- =========================================================
+     PROFILE
+========================================================= -->
+
+<main class="profile-page">
+
+
+    <!-- =====================================================
+         PROFILE HERO
+    ====================================================== -->
+
+    <section class="profile-hero">
+
+
+        <div class="profile-identity">
+
+
+            <!-- PROFILE PICTURE -->
+
+            <div class="profile-picture-container">
+
+                <img
+                    id="profilePicture"
+                    class="profile-picture"
+                    src=""
+                    alt="Profile picture"
+                    style="display: none;"
+                >
+
+
+                <div
+                    id="profilePlaceholder"
+                    class="profile-picture-placeholder"
+                >
+                    ?
+                </div>
+
+            </div>
+
+
+
+            <!-- INFORMATION -->
+
+            <div class="profile-information">
+
+
+                <div class="profile-kicker">
+                    Cataclysm Colony CONTRIBUTOR
+                </div>
+
+
+                <h1 id="profileUsername">
+                    Loading...
+                </h1>
+
+
+                <p
+                    id="profileBio"
+                    class="profile-bio"
+                >
+                    Loading profile...
+                </p>
+
+
+                <div
+                    id="profileMessage"
+                    class="profile-message"
+                ></div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- PROFILE ACTION -->
+
+        <div class="profile-actions">
+
+            <button
+                id="editProfileButton"
+                class="profile-edit-button"
+                type="button"
+                style="display: none;"
+            >
+                Edit profile
+            </button>
+
+            <button
+                id="followButton"
+                class="follow-button"
+                style="display: none;"
+            >
+                Follow
+            </button>
+
+        </div>
+
+
+    </section>
+
+
+    <section
+        id="profileEditor"
+        class="profile-editor"
+        hidden
+    >
+
+        <div class="profile-editor-heading">
+            <div>
+                <span class="profile-kicker">YOUR PROFILE</span>
+                <h2>Make the newsroom yours.</h2>
+            </div>
+
+            <button
+                id="cancelProfileEdit"
+                class="profile-editor-cancel"
+                type="button"
+            >
+                Cancel
+            </button>
+        </div>
+
+        <form id="profileEditForm" class="profile-edit-form">
+            <label class="profile-photo-picker" for="profilePictureInput">
+                <input
+                    id="profilePictureInput"
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif"
+                >
+                <span>Choose profile picture</span>
+                <small>PNG, JPG, WEBP or GIF · up to 1.5 MB</small>
+            </label>
+
+            <label class="profile-bio-editor" for="profileBioInput">
+                <span>Bio</span>
+                <textarea
+                    id="profileBioInput"
+                    maxlength="500"
+                    placeholder="Tell the newsroom about yourself..."
+                ></textarea>
+                <small><span id="bioCharacterCount">0</span>/500</small>
+            </label>
+
+            <div class="profile-editor-actions">
+                <button class="profile-save-button" type="submit">
+                    Save profile
+                </button>
+                <button
+                    id="removeProfilePicture"
+                    class="profile-editor-cancel"
+                    type="button"
+                >
+                    Remove picture
+                </button>
+            </div>
+        </form>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         PROFILE STATS
+    ====================================================== -->
+
+    <section class="profile-stats-panel">
+
+
+        <div class="profile-stat">
+
+            <strong id="followerCount">
+                0
+            </strong>
+
+            <span>
+                Followers
+            </span>
+
+        </div>
+
+
+        <div class="profile-stat">
+
+            <strong id="followingCount">
+                0
+            </strong>
+
+            <span>
+                Following
+            </span>
+
+        </div>
+
+
+        <div class="profile-stat">
+
+            <strong id="articleCount">
+                0
+            </strong>
+
+            <span>
+                Published Articles
+            </span>
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         CONTENT
+    ====================================================== -->
+
+    <div class="profile-content">
+
+
+        <!-- =================================================
+             ARTICLES
+        ================================================== -->
+
+        <section class="profile-articles">
+
+
+            <div class="section-heading">
+
+                <span>
+                    PUBLISHED ARTICLES
+                </span>
+
+                <div></div>
+
+            </div>
+
+
+            <div id="articleList">
+
+                <div class="profile-article">
+
+                    <h3>
+                        Loading articles...
+                    </h3>
+
+                    <p>
+                        Please wait while we load this
+                        contributor's newsroom.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="profile-sidebar">
+
+
+            <!-- ABOUT -->
+
+            <section class="profile-sidebar-box">
+
+                <div class="sidebar-title">
+                    ABOUT THIS CONTRIBUTOR
+                </div>
+
+                <p>
+                    Cataclysm Colony contributors report
+                    on the strange, chaotic and completely
+                    normal events happening across Robloxia.
+                </p>
+
+            </section>
+
+
+
+            <!-- WRITE -->
+
+            <section class="sidebar-write">
+
+                <div class="sidebar-write-kicker">
+                    HAVE A STORY?
+                </div>
+
+                <h2>
+                    Become a reporter.
+                </h2>
+
+                <p>
+                    Write your own article and send it
+                    to the Cataclysm Colony editorial team.
+                </p>
+
+                <a href="write.html">
+                    Open the newsroom →
+                </a>
+
+            </section>
+
+
+        </aside>
+
+
+    </div>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="site-footer">
+
+
+    <div class="footer-inner">
+
+
+        <div>
+
+            <strong>
+                Cataclysm Colony
+            </strong>
+
+            <p>
+                The Roblox Meme Authority.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="#">
+                About
+            </a>
+
+            <a href="#">
+                Editorial policy
+            </a>
+
+            <a href="#">
+                Communities
+            </a>
+
+            <a href="#">
+                Contact
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="footer-bottom">
+
+        © 2026 Cataclysm Colony.
+        All rights reserved under Amber.
+
+    </div>
+
+
+</footer>
+
+
+
+<!-- =========================================================
+     ACCOUNT + LOGOUT
+========================================================= -->
+
+<script>
+
+async function loadAccount() {
+
+    const accountArea =
+        document.getElementById("accountArea");
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+            return;
+        }
+
+
+        const user =
+            await response.json();
+
+
+        accountArea.innerHTML = `
+
+            <a
+                href="profile.html?username=${encodeURIComponent(
+                    user.username
+                )}"
+                class="account-user"
+            >
+                ${user.is_verified ? "✔ " : ""}
+                ${escapeHTML(user.username)}
+            </a>
+
+            <button
+                class="header-logout"
+                onclick="logout()"
+            >
+                Log out
+            </button>
+
+        `;
+
+
+    } catch (error) {
+
+        console.log(
+            "Not logged in."
+        );
+
+    }
+
+}
+
+
+
+async function logout() {
+
+    try {
+
+        await fetch(
+            "/api/logout",
+            {
+                method: "POST",
+                credentials: "same-origin"
+            }
+        );
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+
+    window.location.href =
+        "index.html";
+
+}
+
+
+
+function escapeHTML(value) {
+
+    const div =
+        document.createElement("div");
+
+    div.textContent =
+        value || "";
+
+    return div.innerHTML;
+
+}
+
+
+loadAccount();
+
+</script>
+
+
+
+<!-- PROFILE SCRIPT -->
+
+<script src="profile.js"></script>
+<script src="notifications.js"></script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Join — Cataclysm Colony</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+    <script src="theme.js"></script>
+</head>
+
+<body class="auth-page">
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+        <a href="index.html" class="brand">
+
+            <div class="brand-mark">
+                CC
+            </div>
+
+            <div>
+                <div class="brand-name">
+                    Cataclysm Colony
+                </div>
+
+                <div class="brand-tagline">
+                    THE ROBLOX MEME AUTHORITY
+                </div>
+            </div>
+
+        </a>
+
+        <div class="header-account">
+
+            <a href="index.html" class="header-login">
+                Home
+            </a>
+
+            <a href="login.html" class="header-register">
+                Log in
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="auth-main">
+
+    <section class="auth-shell">
+
+
+        <div class="auth-side">
+
+            <div class="auth-side-label">
+                JOIN THE NEWSROOM
+            </div>
+
+            <h1>
+                Become<br>
+                a reporter.
+            </h1>
+
+            <p>
+                Create your account and start reporting
+                the chaos happening across Robloxia.
+            </p>
+
+            <div class="auth-side-line"></div>
+
+            <span>
+                WRITE. REPORT. CAUSE CHAOS.
+            </span>
+
+        </div>
+
+
+        <div class="auth-form-area">
+
+            <div class="auth-form-header">
+
+                <div class="section-kicker">
+                    NEW ACCOUNT
+                </div>
+
+                <h2>
+                    Create account
+                </h2>
+
+                <p>
+                    Your newsroom identity starts here.
+                </p>
+
+            </div>
+
+
+            <form id="registerForm">
+
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Choose a username"
+                    autocomplete="username"
+                    minlength="3"
+                    required
+                >
+
+
+                <label for="email">
+                    Email address
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="you@example.com"
+                    autocomplete="email"
+                    required
+                >
+
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="At least 8 characters"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                >
+
+
+                <label for="confirmPassword">
+                    Confirm password
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmPassword"
+                    name="confirmPassword"
+                    placeholder="Enter your password again"
+                    autocomplete="new-password"
+                    minlength="8"
+                    required
+                >
+
+
+                <div
+                    id="passwordHint"
+                    class="password-hint"
+                >
+                    Use at least 8 characters.
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+                    Create account
+                </button>
+
+
+                <div
+                    id="registerMessage"
+                    class="auth-message"
+                ></div>
+
+            </form>
+
+
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+
+            <div class="auth-switch">
+
+                Already have an account?
+
+                <a href="login.html">
+                    Log in
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-bottom">
+
+        © 2026 Cataclysm Colony.
+        All rights reserved under Amber.
+
+    </div>
+
+</footer>
+
+
+<script>
+
+const form =
+    document.getElementById("registerForm");
+
+const message =
+    document.getElementById("registerMessage");
+
+const password =
+    document.getElementById("password");
+
+const confirmPassword =
+    document.getElementById("confirmPassword");
+
+const passwordHint =
+    document.getElementById("passwordHint");
+
+
+confirmPassword.addEventListener(
+    "input",
+    checkPasswords
+);
+
+
+function checkPasswords() {
+
+    if (!confirmPassword.value) {
+
+        passwordHint.textContent =
+            "Use at least 8 characters.";
+
+        passwordHint.className =
+            "password-hint";
+
+        return;
+    }
+
+
+    if (
+        password.value !==
+        confirmPassword.value
+    ) {
+
+        passwordHint.textContent =
+            "Passwords do not match.";
+
+        passwordHint.className =
+            "password-hint password-bad";
+
+    } else {
+
+        passwordHint.textContent =
+            "Passwords match.";
+
+        passwordHint.className =
+            "password-hint password-good";
+
+    }
+
+}
+
+
+form.addEventListener(
+    "submit",
+    async function(event) {
+
+        event.preventDefault();
+
+        message.textContent = "";
+        message.className =
+            "auth-message";
+
+
+        const username =
+            document
+                .getElementById("username")
+                .value
+                .trim();
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+        const passwordValue =
+            password.value;
+
+        const confirmValue =
+            confirmPassword.value;
+
+
+        if (passwordValue !== confirmValue) {
+
+            message.textContent =
+                "Your passwords do not match.";
+
+            message.classList.add("error");
+
+            return;
+        }
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/register",
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+                            username,
+                            email,
+                            password:
+                                passwordValue
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                message.textContent =
+                    data.error ||
+                    "Could not create account.";
+
+                message.classList.add(
+                    "error"
+                );
+
+                return;
+            }
+
+
+            message.textContent =
+                "Account created successfully. Redirecting...";
+
+            message.classList.add(
+                "success"
+            );
+
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "login.html";
+
+            }, 700);
+
+
+        } catch (error) {
+
+            message.textContent =
+                "Could not connect to the server.";
+
+            message.classList.add(
+                "error"
+            );
+
+        }
+
+    }
+);
+
+</script>
+
+<script src="notifications.js"></script>
+</body>
+</html>

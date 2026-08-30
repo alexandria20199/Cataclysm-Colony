@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings — Cataclysm Colony</title>
+    <script src="theme.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="site-header">
+        <div class="header-inner">
+            <a href="index.html" class="brand">
+                <div class="brand-mark">CC</div>
+                <div><div class="brand-name">Cataclysm Colony</div><div class="brand-tagline">THE ROBLOX MEME AUTHORITY</div></div>
+            </a>
+            <nav class="main-nav">
+                <a href="index.html">Home</a>
+                <a href="write.html">Write</a>
+                <a href="profile.html">Profile</a>
+                <a href="settings.html" class="active">Settings</a>
+            </nav>
+            <div class="header-account" id="accountArea"></div>
+        </div>
+    </header>
+
+    <div class="breaking-bar"><div class="breaking-inner"><span class="breaking-label">SETTINGS</span><span class="breaking-text">Your Cataclysm Colony account and reading environment.</span></div></div>
+
+    <main class="settings-page">
+        <section class="settings-hero">
+            <span class="section-kicker">ACCOUNT CONTROL</span>
+            <h1>Settings</h1>
+            <p>Keep your account details current and choose how the newsroom looks.</p>
+        </section>
+
+        <div id="settingsMessage" class="settings-message" role="status"></div>
+
+        <section class="settings-card">
+            <div class="settings-card-heading"><div><span>ACCOUNT</span><h2>Email address</h2><p id="currentEmail">Loading your account...</p></div></div>
+            <form id="emailForm" class="settings-form single-row">
+                <label for="emailInput">New email address</label>
+                <input id="emailInput" type="email" autocomplete="email" required>
+                <button type="submit" class="settings-save">Update email</button>
+            </form>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-card-heading"><div><span>SECURITY</span><h2>Change password</h2><p>Use at least eight characters and confirm your current password.</p></div></div>
+            <form id="passwordForm" class="settings-form">
+                <label for="currentPassword">Current password</label>
+                <input id="currentPassword" type="password" autocomplete="current-password" required>
+                <label for="newPassword">New password</label>
+                <input id="newPassword" type="password" autocomplete="new-password" minlength="8" required>
+                <label for="confirmPassword">Confirm new password</label>
+                <input id="confirmPassword" type="password" autocomplete="new-password" minlength="8" required>
+                <button type="submit" class="settings-save">Update password</button>
+            </form>
+        </section>
+
+        <section class="settings-card">
+            <div class="settings-card-heading"><div><span>APPEARANCE</span><h2>Website theme</h2><p>Choose a light newsroom, a dark Roblox-inspired reading mode, or follow your device.</p></div></div>
+            <div class="theme-options" role="radiogroup" aria-label="Website theme">
+                <button type="button" class="theme-option" data-theme-choice="light"><strong>Light</strong><small>Clean newsroom</small></button>
+                <button type="button" class="theme-option" data-theme-choice="dark"><strong>Dark</strong><small>Dark mode</small></button>
+                <button type="button" class="theme-option" data-theme-choice="device"><strong>Device</strong><small>Match your system</small></button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer"><div class="footer-inner"><div><strong>Cataclysm Colony</strong><p>The Roblox Meme Authority.</p></div><div class="footer-links"><a href="index.html">Home</a><a href="profile.html">Profile</a></div></div><div class="footer-bottom">© 2026 Cataclysm Colony.</div></footer>
+
+    <script>
+    (() => {
+        "use strict";
+        const $ = selector => document.querySelector(selector);
+        const message = (text, type = "") => { const el = $("#settingsMessage"); el.textContent = text; el.className = `settings-message ${type}`; };
+        const request = async (url, options = {}) => {
+            const response = await fetch(url, { credentials: "same-origin", ...options });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok) throw new Error(data.error || "Request failed.");
+            return data;
+        };
+        async function loadAccount() {
+            try {
+                const user = await request("/api/me");
+                $("#currentEmail").textContent = user.email;
+                $("#emailInput").value = user.email;
+                $("#accountArea").innerHTML = `<a class="account-user" href="profile.html?username=${encodeURIComponent(user.username)}">${user.username}</a><a class="header-login" href="profile.html">Profile</a>`;
+            } catch (error) { window.location.href = "login.html"; }
+        }
+        $("#emailForm").addEventListener("submit", async event => {
+            event.preventDefault();
+            const button = event.submitter; button.disabled = true;
+            try { const data = await request("/api/me/email", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: $("#emailInput").value }) }); $("#currentEmail").textContent = data.email; message(data.message, "success"); }
+            catch (error) { message(error.message, "error"); } finally { button.disabled = false; }
+        });
+        $("#passwordForm").addEventListener("submit", async event => {
+            event.preventDefault();
+            const button = event.submitter;
+            if ($("#newPassword").value !== $("#confirmPassword").value) { message("The new passwords do not match.", "error"); return; }
+            button.disabled = true;
+            try { const data = await request("/api/me/password", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ current_password: $("#currentPassword").value, new_password: $("#newPassword").value }) }); event.target.reset(); message(data.message, "success"); }
+            catch (error) { message(error.message, "error"); } finally { button.disabled = false; }
+        });
+        document.querySelectorAll("[data-theme-choice]").forEach(button => {
+            button.addEventListener("click", () => { window.CataclysmTheme.set(button.dataset.themeChoice); updateThemeOptions(); });
+        });
+        function updateThemeOptions() { document.querySelectorAll("[data-theme-choice]").forEach(button => button.classList.toggle("selected", button.dataset.themeChoice === window.CataclysmTheme.choice)); }
+        updateThemeOptions(); loadAccount();
+    })();
+    </script>
+    <script src="notifications.js"></script>
+</body>
+</html>

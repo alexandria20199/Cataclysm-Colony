@@ -1,0 +1,1449 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Write an Article — Cataclysm Colony</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="theme.js"></script>
+</head>
+
+
+<body>
+
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+
+        <a
+            href="index.html"
+            class="brand"
+        >
+
+            <div class="brand-mark">
+                CC
+            </div>
+
+
+            <div>
+
+                <div class="brand-name">
+                    Cataclysm Colony
+                </div>
+
+                <div class="brand-tagline">
+                    THE ROBLOX MEME AUTHORITY
+                </div>
+
+            </div>
+
+        </a>
+
+
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a
+                href="write.html"
+                class="active"
+            >
+                Write
+            </a>
+
+            <a href="#">
+                Trending
+            </a>
+
+            <a href="#">
+                Communities
+            </a>
+
+        </nav>
+
+
+
+        <div
+            class="header-account"
+            id="accountArea"
+        >
+
+            <a
+                href="login.html"
+                class="header-login"
+            >
+                Log in
+            </a>
+
+            <a
+                href="register.html"
+                class="header-register"
+            >
+                Join
+            </a>
+
+        </div>
+
+
+    </div>
+
+</header>
+
+
+
+<!-- =========================================================
+     WRITER PAGE
+========================================================= -->
+
+<main class="writer-page">
+
+
+    <!-- PAGE INTRO -->
+
+    <section class="writer-heading">
+
+
+        <div>
+
+            <div class="section-kicker">
+                Cataclysm Colony NEWSROOM
+            </div>
+
+
+            <h1>
+                Write an article
+            </h1>
+
+
+            <p>
+                Tell the story. Make it memorable.
+                Our editors will review it before publication.
+            </p>
+
+        </div>
+
+
+
+        <div class="writer-status">
+
+            <span class="status-dot"></span>
+
+            Editorial submissions open
+
+        </div>
+
+
+    </section>
+
+
+
+    <!-- =====================================================
+         WRITER LAYOUT
+    ====================================================== -->
+
+    <section class="writer-layout">
+
+
+        <!-- =================================================
+             EDITOR
+        ================================================== -->
+
+        <div class="editor-card">
+
+
+            <div class="editor-topbar">
+
+                <span>
+                    ARTICLE EDITOR
+                </span>
+
+                <span id="saveStatus">
+                    Unsaved
+                </span>
+
+            </div>
+
+
+
+            <form id="articleForm">
+
+
+                <!-- HEADLINE -->
+
+                <div class="editor-field headline-field">
+
+                    <label for="headline">
+                        Headline
+                    </label>
+
+
+                    <input
+                        id="headline"
+                        name="headline"
+                        type="text"
+                        maxlength="180"
+                        placeholder="Write a strong headline..."
+                        required
+                    >
+
+
+                    <div class="character-count">
+
+                        <span id="headlineCount">
+                            0
+                        </span>
+
+                        / 180
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- SUMMARY -->
+
+                <div class="editor-field">
+
+                    <label for="summary">
+                        Summary
+                    </label>
+
+
+                    <textarea
+                        id="summary"
+                        name="summary"
+                        maxlength="300"
+                        rows="3"
+                        placeholder="Give readers a quick idea of what happened..."
+                    ></textarea>
+
+
+                    <div class="character-count">
+
+                        <span id="summaryCount">
+                            0
+                        </span>
+
+                        / 300
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- IMAGE -->
+
+                <div class="editor-field">
+
+                    <label>
+                        Article image
+                    </label>
+
+
+                    <div
+                        class="image-upload"
+                        id="imageUpload"
+                    >
+
+                        <input
+                            type="file"
+                            id="imageInput"
+                            accept="image/png,image/jpeg,image/webp"
+                            hidden
+                        >
+
+
+                        <div
+                            class="upload-content"
+                            id="uploadContent"
+                        >
+
+                            <div class="upload-icon">
+                                +
+                            </div>
+
+
+                            <strong>
+                                Choose an image
+                            </strong>
+
+
+                            <span>
+                                PNG, JPG or WEBP
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div
+                        id="imagePreview"
+                        class="image-preview hidden"
+                    >
+
+                        <img
+                            id="previewImage"
+                            alt="Article image preview"
+                        >
+
+
+                        <button
+                            type="button"
+                            id="removeImage"
+                        >
+                            Remove image
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CATEGORY + TAGS -->
+
+                <div class="editor-row">
+
+
+                    <div class="editor-field">
+
+                        <label for="category">
+                            Category
+                        </label>
+
+
+                        <select
+                            id="category"
+                            name="category"
+                            required
+                        >
+
+                            <option value="">
+                                Select category
+                            </option>
+
+                            <option value="Roblox News">
+                                Roblox News
+                            </option>
+
+                            <option value="Community">
+                                Community
+                            </option>
+
+                            <option value="Memes">
+                                Memes
+                            </option>
+
+                            <option value="Games">
+                                Games
+                            </option>
+
+                            <option value="Drama">
+                                Drama
+                            </option>
+
+                            <option value="Updates">
+                                Updates
+                            </option>
+
+                            <option value="Other">
+                                Other
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="editor-field">
+
+                        <label for="tags">
+                            Tags
+                        </label>
+
+
+                        <input
+                            id="tags"
+                            name="tags"
+                            type="text"
+                            placeholder="roblox, meme, bloxburg"
+                        >
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ARTICLE BODY -->
+
+                <div class="editor-field body-field">
+
+
+                    <label for="body">
+                        Article
+                    </label>
+
+
+
+                    <div class="format-toolbar">
+
+
+                        <button
+                            type="button"
+                            data-command="bold"
+                            title="Bold"
+                        >
+                            B
+                        </button>
+
+
+                        <button
+                            type="button"
+                            data-command="italic"
+                            title="Italic"
+                        >
+                            I
+                        </button>
+
+
+                        <button
+                            type="button"
+                            data-command="underline"
+                            title="Underline"
+                        >
+                            U
+                        </button>
+
+
+                        <span></span>
+
+
+                        <button
+                            type="button"
+                            data-command="formatBlock"
+                            data-value="h2"
+                        >
+                            H
+                        </button>
+
+
+                        <button
+                            type="button"
+                            data-command="insertUnorderedList"
+                        >
+                            • List
+                        </button>
+
+
+                        <button
+                            type="button"
+                            data-command="insertOrderedList"
+                        >
+                            1. List
+                        </button>
+
+
+                        <button
+                            type="button"
+                            data-command="formatBlock"
+                            data-value="blockquote"
+                        >
+                            Quote
+                        </button>
+
+
+                    </div>
+
+
+
+                    <div
+                        id="body"
+                        class="article-editor"
+                        contenteditable="true"
+                        data-placeholder="Start writing your story..."
+                    ></div>
+
+
+
+                    <div class="editor-help">
+
+                        Write clearly. Stick to the story.
+                        Articles are reviewed by the editorial team before publication.
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- ACTIONS -->
+
+                <div class="editor-actions">
+
+
+                    <button
+                        type="button"
+                        class="secondary-button"
+                        id="saveDraft"
+                    >
+                        Save draft
+                    </button>
+
+
+                    <button
+                        type="submit"
+                        class="primary-button"
+                    >
+                        Submit for review
+                    </button>
+
+
+                </div>
+
+
+
+                <div
+                    id="formMessage"
+                    class="form-message"
+                ></div>
+
+
+            </form>
+
+
+        </div>
+
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="writer-sidebar">
+
+
+            <div class="sidebar-card">
+
+
+                <span class="sidebar-label">
+                    BEFORE YOU SUBMIT
+                </span>
+
+
+                <h3>
+                    Write like a newsroom.
+                </h3>
+
+
+                <ul>
+
+                    <li>
+                        Make your headline clear.
+                    </li>
+
+                    <li>
+                        Explain what actually happened.
+                    </li>
+
+                    <li>
+                        Use an image that belongs with the story.
+                    </li>
+
+                    <li>
+                        Avoid spam and misleading claims.
+                    </li>
+
+                    <li>
+                        Give your article a useful category.
+                    </li>
+
+                </ul>
+
+
+            </div>
+
+
+
+            <div class="sidebar-card editorial-card">
+
+
+                <span class="sidebar-label">
+                    EDITORIAL PROCESS
+                </span>
+
+
+                <div class="process-step">
+
+                    <strong>
+                        01
+                    </strong>
+
+                    <span>
+                        You write the article.
+                    </span>
+
+                </div>
+
+
+                <div class="process-line"></div>
+
+
+                <div class="process-step">
+
+                    <strong>
+                        02
+                    </strong>
+
+                    <span>
+                        You submit it for review.
+                    </span>
+
+                </div>
+
+
+                <div class="process-line"></div>
+
+
+                <div class="process-step">
+
+                    <strong>
+                        03
+                    </strong>
+
+                    <span>
+                        An editor reviews it.
+                    </span>
+
+                </div>
+
+
+                <div class="process-line"></div>
+
+
+                <div class="process-step">
+
+                    <strong>
+                        04
+                    </strong>
+
+                    <span>
+                        Approved stories are published.
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+        </aside>
+
+
+    </section>
+
+
+</main>
+
+
+
+<!-- =========================================================
+     FOOTER
+========================================================= -->
+
+<footer class="site-footer">
+
+
+    <div class="footer-inner">
+
+
+        <div>
+
+            <strong>
+                Cataclysm Colony
+            </strong>
+
+            <p>
+                The Roblox Meme Authority.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="#">
+                Editorial policy
+            </a>
+
+            <a href="#">
+                Communities
+            </a>
+
+            <a href="#">
+                Contact
+            </a>
+
+        </div>
+
+
+    </div>
+
+
+
+    <div class="footer-bottom">
+
+        © 2026 Cataclysm Colony.
+        All rights reserved under Amber.
+
+    </div>
+
+
+</footer>
+
+
+
+<script>
+
+
+// ============================================================
+// ACCOUNT
+// ============================================================
+
+async function loadAccount() {
+
+    const accountArea =
+        document.getElementById("accountArea");
+
+
+    try {
+
+        const response =
+            await fetch("/api/me");
+
+
+        if (!response.ok) {
+            return;
+        }
+
+
+        const user =
+            await response.json();
+
+
+        accountArea.innerHTML = `
+
+            <a
+                href="profile.html?username=${encodeURIComponent(user.username)}"
+                class="account-user"
+            >
+                ${user.is_verified ? "✔ " : ""}
+                ${user.username}
+            </a>
+
+            <button
+                class="header-logout"
+                onclick="logout()"
+            >
+                Log out
+            </button>
+
+        `;
+
+
+    } catch (error) {
+
+        console.log(
+            "Not logged in."
+        );
+
+    }
+
+}
+
+
+async function logout() {
+
+    await fetch(
+        "/api/logout",
+        {
+            method: "POST"
+        }
+    );
+
+
+    window.location.reload();
+
+}
+
+
+loadAccount();
+
+
+
+// ============================================================
+// ELEMENTS
+// ============================================================
+
+const form =
+    document.getElementById("articleForm");
+
+const headline =
+    document.getElementById("headline");
+
+const summary =
+    document.getElementById("summary");
+
+const body =
+    document.getElementById("body");
+
+const category =
+    document.getElementById("category");
+
+const tags =
+    document.getElementById("tags");
+
+const imageInput =
+    document.getElementById("imageInput");
+
+const imageUpload =
+    document.getElementById("imageUpload");
+
+const imagePreview =
+    document.getElementById("imagePreview");
+
+const previewImage =
+    document.getElementById("previewImage");
+
+const removeImage =
+    document.getElementById("removeImage");
+
+const saveDraft =
+    document.getElementById("saveDraft");
+
+const saveStatus =
+    document.getElementById("saveStatus");
+
+const formMessage =
+    document.getElementById("formMessage");
+
+
+let imageData = "";
+
+
+
+// ============================================================
+// LOGIN CHECK
+// ============================================================
+
+async function checkLogin() {
+
+    try {
+
+        const response =
+            await fetch("/api/me");
+
+
+        if (!response.ok) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+checkLogin();
+
+
+
+// ============================================================
+// CHARACTER COUNTERS
+// ============================================================
+
+headline.addEventListener(
+    "input",
+    () => {
+
+        document.getElementById(
+            "headlineCount"
+        ).textContent =
+            headline.value.length;
+
+
+        saveStatus.textContent =
+            "Unsaved";
+
+    }
+);
+
+
+summary.addEventListener(
+    "input",
+    () => {
+
+        document.getElementById(
+            "summaryCount"
+        ).textContent =
+            summary.value.length;
+
+
+        saveStatus.textContent =
+            "Unsaved";
+
+    }
+);
+
+
+body.addEventListener(
+    "input",
+    () => {
+
+        saveStatus.textContent =
+            "Unsaved";
+
+    }
+);
+
+
+
+// ============================================================
+// IMAGE PICKER
+// ============================================================
+
+imageUpload.addEventListener(
+    "click",
+    () => {
+
+        imageInput.click();
+
+    }
+);
+
+
+imageInput.addEventListener(
+    "change",
+    () => {
+
+        const file =
+            imageInput.files[0];
+
+
+        if (!file) return;
+
+
+        if (
+            ![
+                "image/png",
+                "image/jpeg",
+                "image/webp"
+            ].includes(file.type)
+        ) {
+
+            showMessage(
+                "Please choose a PNG, JPG or WEBP image.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        if (
+            file.size >
+            5 * 1024 * 1024
+        ) {
+
+            showMessage(
+                "Images must be smaller than 5 MB.",
+                "error"
+            );
+
+            return;
+
+        }
+
+
+        const reader =
+            new FileReader();
+
+
+        reader.onload =
+            event => {
+
+                imageData =
+                    event.target.result;
+
+
+                previewImage.src =
+                    imageData;
+
+
+                imagePreview.classList.remove(
+                    "hidden"
+                );
+
+
+                imageUpload.classList.add(
+                    "hidden"
+                );
+
+
+                saveStatus.textContent =
+                    "Unsaved";
+
+            };
+
+
+        reader.readAsDataURL(file);
+
+    }
+);
+
+
+
+// ============================================================
+// REMOVE IMAGE
+// ============================================================
+
+removeImage.addEventListener(
+    "click",
+    () => {
+
+        imageData = "";
+
+        imageInput.value = "";
+
+        previewImage.src = "";
+
+        imagePreview.classList.add(
+            "hidden"
+        );
+
+        imageUpload.classList.remove(
+            "hidden"
+        );
+
+    }
+);
+
+
+
+// ============================================================
+// RICH TEXT TOOLBAR
+// ============================================================
+
+document
+    .querySelectorAll(
+        ".format-toolbar button"
+    )
+    .forEach(
+        button => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const command =
+                        button.dataset.command;
+
+                    const value =
+                        button.dataset.value ||
+                        null;
+
+
+                    body.focus();
+
+
+                    if (
+                        command ===
+                        "formatBlock"
+                    ) {
+
+                        document.execCommand(
+                            command,
+                            false,
+                            value
+                        );
+
+                    } else {
+
+                        document.execCommand(
+                            command,
+                            false,
+                            null
+                        );
+
+                    }
+
+
+                    saveStatus.textContent =
+                        "Unsaved";
+
+                }
+            );
+
+        }
+    );
+
+
+
+// ============================================================
+// MESSAGE
+// ============================================================
+
+function showMessage(
+    message,
+    type
+) {
+
+    formMessage.textContent =
+        message;
+
+
+    formMessage.className =
+        "form-message " + type;
+
+}
+
+
+
+// ============================================================
+// ARTICLE DATA
+// ============================================================
+
+function getArticleData() {
+
+    return {
+
+        headline:
+            headline.value.trim(),
+
+        summary:
+            summary.value.trim(),
+
+        body:
+            body.innerHTML.trim(),
+
+        image:
+            imageData,
+
+        category:
+            category.value,
+
+        tags:
+            tags.value.trim()
+
+    };
+
+}
+
+
+
+// ============================================================
+// SAVE DRAFT
+// ============================================================
+
+saveDraft.addEventListener(
+    "click",
+    async () => {
+
+        const data =
+            getArticleData();
+
+
+        saveDraft.disabled =
+            true;
+
+        saveDraft.textContent =
+            "Saving...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/articles/draft",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(data)
+
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result.error ||
+                    "Could not save draft."
+                );
+
+            }
+
+
+            saveStatus.textContent =
+                "Draft saved";
+
+
+            showMessage(
+                "Your draft has been saved.",
+                "success"
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                error.message,
+                "error"
+            );
+
+
+        } finally {
+
+            saveDraft.disabled =
+                false;
+
+            saveDraft.textContent =
+                "Save draft";
+
+        }
+
+    }
+);
+
+
+
+// ============================================================
+// SUBMIT ARTICLE
+// ============================================================
+
+form.addEventListener(
+    "submit",
+    async event => {
+
+        event.preventDefault();
+
+
+        const data =
+            getArticleData();
+
+
+        if (!data.headline) {
+
+            showMessage(
+                "Please write a headline.",
+                "error"
+            );
+
+            headline.focus();
+
+            return;
+
+        }
+
+
+        if (!data.category) {
+
+            showMessage(
+                "Please choose a category.",
+                "error"
+            );
+
+            category.focus();
+
+            return;
+
+        }
+
+
+        const plainText =
+            body.innerText.trim();
+
+
+        if (!plainText) {
+
+            showMessage(
+                "Your article cannot be empty.",
+                "error"
+            );
+
+            body.focus();
+
+            return;
+
+        }
+
+
+        if (
+            plainText.length <
+            30
+        ) {
+
+            showMessage(
+                "Your article needs more content before it can be submitted.",
+                "error"
+            );
+
+            body.focus();
+
+            return;
+
+        }
+
+
+        const submitButton =
+            form.querySelector(
+                ".primary-button"
+            );
+
+
+        submitButton.disabled =
+            true;
+
+        submitButton.textContent =
+            "Submitting...";
+
+
+        try {
+
+            const response =
+                await fetch(
+                    "/api/articles",
+                    {
+
+                        method:
+                            "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:
+                            JSON.stringify(data)
+
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    result.error ||
+                    "Could not submit article."
+                );
+
+            }
+
+
+            saveStatus.textContent =
+                "Submitted";
+
+
+            showMessage(
+                "Article submitted! It is now waiting for editorial review.",
+                "success"
+            );
+
+
+            submitButton.textContent =
+                "Submitted";
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            showMessage(
+                error.message,
+                "error"
+            );
+
+
+            submitButton.disabled =
+                false;
+
+
+            submitButton.textContent =
+                "Submit for review";
+
+        }
+
+    }
+);
+
+</script>
+
+
+<script src="notifications.js"></script>
+</body>
+
+</html>

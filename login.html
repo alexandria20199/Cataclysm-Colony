@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Log in — Cataclysm Colony</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+    <script src="theme.js"></script>
+</head>
+
+<body class="auth-page">
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+        <a href="index.html" class="brand">
+
+            <div class="brand-mark">
+                CC
+            </div>
+
+            <div>
+                <div class="brand-name">
+                    Cataclysm Colony
+                </div>
+
+                <div class="brand-tagline">
+                    THE ROBLOX MEME AUTHORITY
+                </div>
+            </div>
+
+        </a>
+
+        <div class="header-account">
+
+            <a href="index.html" class="header-login">
+                Home
+            </a>
+
+            <a href="register.html" class="header-register">
+                Join
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="auth-main">
+
+    <section class="auth-shell">
+
+        <div class="auth-side">
+
+            <div class="auth-side-label">
+                Cataclysm Colony NEWSROOM
+            </div>
+
+            <h1>
+                Welcome<br>
+                back.
+            </h1>
+
+            <p>
+                Sign in to write stories, follow reporters,
+                save articles and become part of the newsroom.
+            </p>
+
+            <div class="auth-side-line"></div>
+
+            <span>
+                THE ROBLOX MEME AUTHORITY
+            </span>
+
+        </div>
+
+
+        <div class="auth-form-area">
+
+            <div class="auth-form-header">
+
+                <div class="section-kicker">
+                    ACCOUNT
+                </div>
+
+                <h2>
+                    Log in
+                </h2>
+
+                <p>
+                    Welcome back to Cataclysm Colony.
+                </p>
+
+            </div>
+
+
+            <form id="loginForm">
+
+                <label for="username">
+                    Username
+                </label>
+
+                <input
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="Enter your username"
+                    autocomplete="username"
+                    required
+                >
+
+
+                <label for="password">
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required
+                >
+
+
+                <div class="auth-options">
+
+                    <label class="remember-option">
+
+                        <input
+                            type="checkbox"
+                            id="remember"
+                        >
+
+                        <span>
+                            Remember me
+                        </span>
+
+                    </label>
+
+                    <a href="#">
+                        Forgot password?
+                    </a>
+
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+                    Log in
+                </button>
+
+                <div
+                    id="loginMessage"
+                    class="auth-message"
+                ></div>
+
+            </form>
+
+
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+
+
+            <div class="auth-switch">
+
+                Don't have an account?
+
+                <a href="register.html">
+                    Create one
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-bottom">
+
+        © 2026 Cataclysm Colony.
+        All rights reserved under Amber.
+
+    </div>
+
+</footer>
+
+
+<script>
+
+const form =
+    document.getElementById("loginForm");
+
+const message =
+    document.getElementById("loginMessage");
+
+
+form.addEventListener("submit", async function(event) {
+
+    event.preventDefault();
+
+    message.textContent = "";
+    message.className = "auth-message";
+
+
+    const username =
+        document.getElementById("username").value.trim();
+
+    const password =
+        document.getElementById("password").value;
+
+
+    try {
+
+        const response =
+            await fetch("/api/login", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+                    username,
+                    password
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            message.textContent =
+                data.error ||
+                "Login failed.";
+
+            message.classList.add("error");
+
+            return;
+        }
+
+
+        message.textContent =
+            "Login successful. Redirecting...";
+
+        message.classList.add("success");
+
+
+        setTimeout(() => {
+
+            window.location.href =
+                "index.html";
+
+        }, 500);
+
+
+    } catch (error) {
+
+        message.textContent =
+            "Could not connect to the server.";
+
+        message.classList.add("error");
+
+    }
+
+});
+
+</script>
+
+<script src="notifications.js"></script>
+</body>
+</html>

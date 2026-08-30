@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Cataclysm Colony</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@400;500;600;700;800;900&family=Roboto:wght@400;500;600;700;800;900&display=swap"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="style.css">
+    <script src="theme.js"></script>
+</head>
+
+<body>
+
+<!-- =========================================================
+     HEADER
+========================================================= -->
+
+<header class="main-header">
+
+    <div class="header-logo">
+        <a href="index.html">
+            <h1>Cataclysm Colony</h1>
+            <p>THE INTERNET'S MOST QUESTIONABLE NEWSROOM</p>
+        </a>
+    </div>
+
+    <nav class="header-nav">
+        <a href="index.html" class="active">HOME</a>
+        <a href="write.html">WRITE</a>
+        <a href="profile.html">PROFILE</a>
+    </nav>
+
+    <div class="header-account" id="headerAccount">
+
+        <a href="login.html" class="header-login">
+            LOG IN
+        </a>
+
+        <a href="register.html" class="header-register">
+            REGISTER
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- =========================================================
+     BREAKING BAR
+========================================================= -->
+
+<div class="breaking-bar">
+
+    <div class="breaking-inner">
+
+        <span class="breaking-label">
+            BREAKING
+        </span>
+
+        <span class="breaking-text" id="breakingText">
+            The newsroom is currently investigating absolutely everything.
+        </span>
+
+    </div>
+
+</div>
+
+
+<!-- =========================================================
+     HOME
+========================================================= -->
+
+<main class="home-container">
+
+    <!-- INTRO -->
+
+    <section class="home-intro">
+
+        <div>
+
+            <div class="section-kicker">
+                Cataclysm Colony / NEWSROOM
+            </div>
+
+            <h1>
+                Today's<br>
+                questionable news.
+            </h1>
+
+            <p>
+                Serious reporting on unserious events, questionable Roblox
+                incidents, internet disasters, and whatever else somehow
+                became news.
+            </p>
+
+        </div>
+
+        <a href="write.html" class="write-button">
+            WRITE A STORY
+        </a>
+
+    </section>
+
+
+    <!-- =====================================================
+         FEATURED STORY
+    ====================================================== -->
+
+    <section>
+
+        <div class="section-heading">
+            <span>FEATURED STORY</span>
+            <div></div>
+        </div>
+
+        <article class="featured-story" id="featuredStory">
+
+            <a
+                href="#"
+                class="featured-image"
+                id="featuredImageLink"
+                aria-label="Read featured story"
+            >
+                <img
+                    id="featuredImage"
+                    src=""
+                    alt=""
+                >
+
+                <span class="featured-label">
+                    FEATURED
+                </span>
+            </a>
+
+            <div class="featured-content">
+
+                <div class="story-category" id="featuredCategory">
+                    NEWSROOM
+                </div>
+
+                <h2 id="featuredTitle">
+                    Loading today's headline...
+                </h2>
+
+                <p class="featured-summary" id="featuredSummary">
+                    The newsroom is retrieving the latest reports.
+                </p>
+
+                <div class="story-meta">
+
+                    <span id="featuredAuthor">
+                        Cataclysm Colony
+                    </span>
+
+                    <span>•</span>
+
+                    <span id="featuredDate">
+                        TODAY
+                    </span>
+
+                </div>
+
+                <a
+                    href="#"
+                    class="read-story"
+                    id="featuredRead"
+                >
+                    READ FULL STORY →
+                </a>
+
+            </div>
+
+        </article>
+
+    </section>
+
+
+    <!-- =====================================================
+         NEWS + SIDEBAR
+    ====================================================== -->
+
+    <section class="news-layout">
+
+        <!-- =================================================
+             STORIES
+        ================================================== -->
+
+        <div>
+
+            <div class="section-heading">
+                <span>LATEST STORIES</span>
+                <div></div>
+            </div>
+
+            <div
+                class="story-grid"
+                id="storyGrid"
+            >
+
+                <!-- Cards inserted by JavaScript -->
+
+                <article class="news-card" id="loadingCard">
+
+                    <div class="news-card-image"></div>
+
+                    <div class="news-card-body">
+
+                        <div class="story-category">
+                            NEWSROOM
+                        </div>
+
+                        <h3>
+                            Loading the newsroom...
+                        </h3>
+
+                        <p>
+                            Fetching the latest questionable reporting.
+                        </p>
+
+                        <div class="card-meta">
+                            PLEASE WAIT
+                        </div>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             SIDEBAR
+        ================================================== -->
+
+        <aside class="news-sidebar">
+
+            <!-- TRENDING -->
+
+            <div class="sidebar-box">
+
+                <div class="sidebar-title">
+                    TRENDING NOW
+                </div>
+
+                <div id="trendingList">
+
+                    <a href="#" class="trend-item">
+
+                        <span class="trend-number">
+                            01
+                        </span>
+
+                        <span>
+                            <strong>
+                                Loading newsroom trends...
+                            </strong>
+
+                            <small>
+                                Cataclysm Colony
+                            </small>
+                        </span>
+
+                    </a>
+
+                    <a href="#" class="trend-item">
+
+                        <span class="trend-number">
+                            02
+                        </span>
+
+                        <span>
+                            <strong>
+                                The internet remains unstable
+                            </strong>
+
+                            <small>
+                                DEVELOPING
+                            </small>
+                        </span>
+
+                    </a>
+
+                    <a href="#" class="trend-item">
+
+                        <span class="trend-number">
+                            03
+                        </span>
+
+                        <span>
+                            <strong>
+                                More questionable reporting incoming
+                            </strong>
+
+                            <small>
+                                NEWSROOM
+                            </small>
+                        </span>
+
+                    </a>
+
+                </div>
+
+            </div>
+
+
+            <!-- WRITE -->
+
+            <div class="sidebar-write">
+
+                <div class="sidebar-write-kicker">
+                    HAVE SOMETHING TO REPORT?
+                </div>
+
+                <h2>
+                    Become part of the newsroom.
+                </h2>
+
+                <p>
+                    Write stories, document chaos, and contribute your
+                    questionable journalism to Cataclysm Colony.
+                </p>
+
+                <a href="write.html">
+                    START WRITING →
+                </a>
+
+            </div>
+
+        </aside>
+
+    </section>
+
+</main>
+
+
+<!-- =========================================================
+     PAGE SCRIPT
+========================================================= -->
+
+<script>
+
+(() => {
+
+    "use strict";
+
+
+    /* =====================================================
+       HELPERS
+    ====================================================== */
+
+    const $ = (selector) => document.querySelector(selector);
+
+
+    function escapeHTML(value) {
+
+        if (value === null || value === undefined) {
+            return "";
+        }
+
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
+
+
+    function getArticleId(article) {
+
+        return (
+            article?.id ??
+            article?.article_id ??
+            article?.articleId ??
+            null
+        );
+
+    }
+
+
+    function getTitle(article) {
+
+        return (
+            article?.title ??
+            article?.headline ??
+            article?.name ??
+            "Untitled Story"
+        );
+
+    }
+
+
+    function getSummary(article) {
+
+        return (
+            article?.summary ??
+            article?.excerpt ??
+            article?.description ??
+            article?.subtitle ??
+            "No summary was provided for this story."
+        );
+
+    }
+
+
+    function getCategory(article) {
+
+        return (
+            article?.category ??
+            article?.community ??
+            article?.section ??
+            "NEWSROOM"
+        );
+
+    }
+
+
+    function getAuthor(article) {
+
+        if (typeof article?.author === "string") {
+            return article.author;
+        }
+
+        if (article?.author?.username) {
+            return article.author.username;
+        }
+
+        if (article?.username) {
+            return article.username;
+        }
+
+        if (article?.author_username) {
+            return article.author_username;
+        }
+
+        return "Cataclysm Colony";
+
+    }
+
+
+    function getImage(article) {
+
+        return (
+            article?.image_url ??
+            article?.imageUrl ??
+            article?.image ??
+            article?.cover_image ??
+            article?.coverImage ??
+            article?.featured_image ??
+            ""
+        );
+
+    }
+
+
+    function getDate(article) {
+
+        const raw =
+            article?.published_at ??
+            article?.publishedAt ??
+            article?.created_at ??
+            article?.createdAt ??
+            article?.date;
+
+        if (!raw) {
+            return "RECENT";
+        }
+
+        const date = new Date(raw);
+
+        if (Number.isNaN(date.getTime())) {
+            return String(raw);
+        }
+
+        return date.toLocaleDateString(undefined, {
+            year: "numeric",
+            month: "short",
+            day: "numeric"
+        }).toUpperCase();
+
+    }
+
+
+    function getReadingTime(article) {
+
+        const source =
+            article?.body ??
+            article?.content ??
+            getSummary(article);
+
+        const text = String(source)
+            .replace(/<[^>]*>/g, " ")
+            .replace(/&nbsp;/gi, " ")
+            .trim();
+
+        const words = text.match(/\S+/g)?.length || 1;
+        const minutes = Math.floor(words / 60);
+        const seconds = words % 60;
+
+        if (!minutes) {
+            return `${seconds} SEC READ`;
+        }
+
+        return seconds
+            ? `${minutes} MIN ${seconds} SEC READ`
+            : `${minutes} MIN READ`;
+
+    }
+
+
+    function getArticleURL(article) {
+
+        const id = getArticleId(article);
+
+        if (id !== null) {
+            return `article.html?id=${encodeURIComponent(id)}`;
+        }
+
+        if (article?.slug) {
+            return `article.html?slug=${encodeURIComponent(article.slug)}`;
+        }
+
+        return "article.html";
+
+    }
+
+
+    function normalizeHomepage(data) {
+
+        if (data && (data.featured || Array.isArray(data.cards))) {
+            const featured = data.featured || null;
+            const cards = Array.isArray(data.cards) ? data.cards : [];
+
+            return {
+                featured,
+                cards,
+                all: [featured, ...cards].filter(Boolean)
+            };
+        }
+
+        const articles = Array.isArray(data)
+            ? data
+            : data?.articles || data?.stories || data?.news ||
+              data?.latest || data?.published || [];
+
+        return {
+            featured: articles[0] || null,
+            cards: articles.slice(1),
+            all: articles
+        };
+
+    }
+
+
+    /* =====================================================
+       HEADER ACCOUNT
+    ====================================================== */
+
+    async function loadAccount() {
+
+        const account = $("#headerAccount");
+
+        if (!account) {
+            return;
+        }
+
+        try {
+
+            const response = await fetch("/api/me", {
+                credentials: "include"
+            });
+
+            if (!response.ok) {
+                return;
+            }
+
+            const data = await response.json();
+
+            const user =
+                data?.user ??
+                data?.account ??
+                data;
+
+            if (!user || !user.username) {
+                return;
+            }
+
+            account.innerHTML = `
+                <span class="account-user">
+                    ${escapeHTML(user.username)}
+                </span>
+
+                <button
+                    type="button"
+                    class="header-logout"
+                    id="logoutButton"
+                >
+                    LOG OUT
+                </button>
+            `;
+
+            const logoutButton = $("#logoutButton");
+
+            logoutButton?.addEventListener("click", async () => {
+
+                try {
+
+                    await fetch("/api/logout", {
+                        method: "POST",
+                        credentials: "include"
+                    });
+
+                } catch (error) {
+                    console.error(error);
+                }
+
+                window.location.reload();
+
+            });
+
+        } catch (error) {
+
+            // Not logged in is completely normal.
+            console.log("Guest session.");
+
+        }
+
+    }
+
+
+    /* =====================================================
+       FEATURED STORY
+    ====================================================== */
+
+    function renderFeatured(article) {
+
+        if (!article) {
+            return;
+        }
+
+        const id = getArticleId(article);
+        const url = getArticleURL(article);
+        const image = getImage(article);
+
+        const title = getTitle(article);
+        const summary = getSummary(article);
+        const category = getCategory(article);
+        const author = getAuthor(article);
+        const date = getDate(article);
+
+        const titleElement = $("#featuredTitle");
+        const summaryElement = $("#featuredSummary");
+        const categoryElement = $("#featuredCategory");
+        const authorElement = $("#featuredAuthor");
+        const dateElement = $("#featuredDate");
+
+        if (titleElement) {
+            titleElement.textContent = title;
+        }
+
+        if (summaryElement) {
+            summaryElement.textContent = summary;
+        }
+
+        if (categoryElement) {
+            categoryElement.textContent =
+                String(category).toUpperCase();
+        }
+
+        if (authorElement) {
+            authorElement.textContent =
+                String(author).toUpperCase();
+        }
+
+        if (dateElement) {
+            dateElement.textContent = date;
+        }
+
+        const imageElement = $("#featuredImage");
+
+        if (imageElement) {
+
+            if (image) {
+
+                imageElement.src = image;
+                imageElement.alt = title;
+
+            } else {
+
+                imageElement.removeAttribute("src");
+                imageElement.alt = "Cataclysm Colony story";
+
+            }
+
+        }
+
+        const imageLink = $("#featuredImageLink");
+        const readLink = $("#featuredRead");
+
+        if (imageLink) {
+            imageLink.href = url;
+        }
+
+        if (readLink) {
+            readLink.href = url;
+        }
+
+    }
+
+
+    /* =====================================================
+       STORY CARDS
+    ====================================================== */
+
+    function createCard(article) {
+
+        const url = getArticleURL(article);
+
+        const title = getTitle(article);
+        const summary = getSummary(article);
+        const category = getCategory(article);
+        const author = getAuthor(article);
+        const date = getDate(article);
+        const image = getImage(article);
+
+        const articleElement =
+            document.createElement("article");
+
+        articleElement.className = "news-card";
+
+        articleElement.innerHTML = `
+
+            <a
+                href="${escapeHTML(url)}"
+                class="news-card-image"
+                aria-label="${escapeHTML(title)}"
+            >
+
+                ${
+                    image
+                        ? `
+                            <img
+                                src="${escapeHTML(image)}"
+                                alt="${escapeHTML(title)}"
+                                loading="lazy"
+                            >
+                        `
+                        : ""
+                }
+
+                <span>
+                    ${escapeHTML(String(category).toUpperCase())}
+                </span>
+
+            </a>
+
+            <div class="news-card-body">
+
+                <div class="story-category">
+                    ${escapeHTML(String(category).toUpperCase())}
+                </div>
+
+                <h3 class="card-title">
+                    <a href="${escapeHTML(url)}">
+                        ${escapeHTML(title)}
+                    </a>
+                </h3>
+
+                <div class="card-about-label">
+                    ABOUT THIS STORY
+                </div>
+
+                <p class="card-summary" aria-label="About this story">
+                    ${escapeHTML(summary)}
+                </p>
+
+                <div class="card-meta">
+                    ${escapeHTML(String(author).toUpperCase())}
+                    &nbsp; / &nbsp;
+                    ${escapeHTML(date)}
+                    &nbsp; / &nbsp;
+                    ${escapeHTML(getReadingTime(article))}
+                </div>
+
+            </div>
+        `;
+
+        return articleElement;
+
+    }
+
+
+    function renderCards(articles) {
+
+        const grid = $("#storyGrid");
+
+        if (!grid) {
+            return;
+        }
+
+        grid.innerHTML = "";
+
+        if (!articles.length) {
+
+            grid.innerHTML = `
+
+                <article class="news-card">
+
+                    <div class="news-card-body">
+
+                        <div class="story-category">
+                            NEWSROOM
+                        </div>
+
+                        <h3>
+                            No stories have escaped the newsroom yet.
+                        </h3>
+
+                        <p>
+                            Be the first person to publish something
+                            questionable.
+                        </p>
+
+                        <a
+                            href="write.html"
+                            class="read-story"
+                        >
+                            WRITE THE FIRST STORY →
+                        </a>
+
+                    </div>
+
+                </article>
+
+            `;
+
+            return;
+        }
+
+
+        articles.forEach(article => {
+
+            grid.appendChild(
+                createCard(article)
+            );
+
+        });
+
+
+    }
+
+
+    /* =====================================================
+       TRENDING
+    ====================================================== */
+
+    function renderTrending(articles) {
+
+        const list = $("#trendingList");
+
+        if (!list || !articles.length) {
+            return;
+        }
+
+        list.innerHTML = "";
+
+        const trending =
+            articles.slice(0, 5);
+
+        trending.forEach((article, index) => {
+
+            const item =
+                document.createElement("a");
+
+            item.className = "trend-item";
+            item.href = getArticleURL(article);
+
+            item.innerHTML = `
+
+                <span class="trend-number">
+                    ${String(index + 1).padStart(2, "0")}
+                </span>
+
+                <span>
+
+                    <strong>
+                        ${escapeHTML(getTitle(article))}
+                    </strong>
+
+                    <small>
+                        ${escapeHTML(
+                            String(getCategory(article)).toUpperCase()
+                        )}
+                    </small>
+
+                </span>
+
+            `;
+
+            list.appendChild(item);
+
+        });
+
+    }
+
+
+    /* =====================================================
+       NEWSROOM ERROR STATE
+    ====================================================== */
+
+    function showError(error) {
+
+        console.error(
+            "Cataclysm Colony newsroom error:",
+            error
+        );
+
+        const featuredTitle =
+            $("#featuredTitle");
+
+        const featuredSummary =
+            $("#featuredSummary");
+
+        if (featuredTitle) {
+            featuredTitle.textContent =
+                "The newsroom has encountered a problem.";
+        }
+
+        if (featuredSummary) {
+            featuredSummary.textContent =
+                "The latest reports could not be retrieved. Check that the Cataclysm Colony server is running.";
+        }
+
+        const grid =
+            $("#storyGrid");
+
+        const trendingList =
+            $("#trendingList");
+
+        if (trendingList) {
+            trendingList.innerHTML = `
+                <div class="trend-item">
+                    <span class="trend-number">!</span>
+                    <span>
+                        <strong>Trending stories are unavailable.</strong>
+                        <small>TRY AGAIN SHORTLY</small>
+                    </span>
+                </div>
+            `;
+        }
+
+        if (grid) {
+
+            grid.innerHTML = `
+
+                <article class="news-card">
+
+                    <div class="news-card-body">
+
+                        <div class="story-category">
+                            NEWSROOM ERROR
+                        </div>
+
+                        <h3>
+                            Newsroom unavailable.
+                        </h3>
+
+                        <p>
+                            The server did not return the latest
+                            articles. Please make sure the backend
+                            is running and try again.
+                        </p>
+
+                        <div class="card-meta">
+                            Cataclysm Colony
+                        </div>
+
+                    </div>
+
+                </article>
+
+            `;
+
+        }
+
+    }
+
+
+    /* =====================================================
+       LOAD NEWSROOM
+    ====================================================== */
+
+    async function loadNewsroom() {
+
+        try {
+
+            const response =
+                await fetch("/api/homepage", {
+                    credentials: "include"
+                });
+
+            if (!response.ok) {
+                throw new Error(
+                    `Homepage request failed: ${response.status}`
+                );
+            }
+
+            const data =
+                await response.json();
+
+            const homepage =
+                normalizeHomepage(data);
+
+            if (!homepage.featured) {
+
+                const title = $("#featuredTitle");
+                const summary = $("#featuredSummary");
+                const trendingList = $("#trendingList");
+
+                if (title) {
+                    title.textContent =
+                        "No stories have reached the newsroom yet.";
+                }
+
+                if (summary) {
+                    summary.textContent =
+                        "Publish the first questionable report to put it on the front page.";
+                }
+
+                if (trendingList) {
+                    trendingList.innerHTML = `
+                        <div class="trend-item">
+                            <span class="trend-number">—</span>
+                            <span>
+                                <strong>No trends yet.</strong>
+                                <small>THE NEWSROOM IS WAITING</small>
+                            </span>
+                        </div>
+                    `;
+                }
+
+                renderCards([]);
+                return;
+
+            }
+
+            renderFeatured(homepage.featured);
+
+            renderCards(
+                homepage.cards.length ? homepage.cards : [homepage.featured]
+            );
+
+            renderTrending(homepage.all);
+
+
+            /*
+             * Update the breaking strip using the featured story.
+             */
+            const breakingText =
+                $("#breakingText");
+
+            if (breakingText) {
+
+                breakingText.textContent =
+                    getTitle(homepage.featured);
+
+            }
+
+        } catch (error) {
+
+            showError(error);
+
+        }
+
+    }
+
+
+    /* =====================================================
+       START
+    ====================================================== */
+
+    loadAccount();
+    loadNewsroom();
+
+})();
+
+</script>
+
+<script src="notifications.js"></script>
+</body>
+</html>

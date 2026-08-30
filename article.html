@@ -1,0 +1,2180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Article — Cataclysm Colony</title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Slab:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <script src="theme.js"></script>
+</head>
+
+
+<body>
+
+
+<header class="site-header">
+
+    <div class="header-inner">
+
+        <a
+            href="index.html"
+            class="brand"
+        >
+
+            <div class="brand-mark">
+                CC
+            </div>
+
+            <div>
+
+                <div class="brand-name">
+                    Cataclysm Colony
+                </div>
+
+                <div class="brand-tagline">
+                    THE ROBLOX MEME AUTHORITY
+                </div>
+
+            </div>
+
+        </a>
+
+
+        <nav class="main-nav">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="write.html">
+                Write
+            </a>
+
+        </nav>
+
+
+        <div
+            class="header-account"
+            id="headerAccount"
+        >
+
+            <a
+                href="login.html"
+                class="header-login"
+            >
+                Login
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<div class="breaking-bar">
+
+    <div class="breaking-inner">
+
+        <span class="breaking-label">
+            Cataclysm Colony
+        </span>
+
+        <span class="breaking-text">
+            The Roblox Meme Authority
+        </span>
+
+    </div>
+
+</div>
+
+
+<main class="article-page">
+
+    <div
+        id="articleContainer"
+        class="article-container"
+    >
+
+        <div class="article-loading">
+
+            <div class="admin-spinner"></div>
+
+            <p>
+                Loading article...
+            </p>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="footer-inner">
+
+        <div>
+
+            <strong>
+                Cataclysm Colony
+            </strong>
+
+            <p>
+                The Roblox Meme Authority.
+            </p>
+
+        </div>
+
+
+        <div class="footer-links">
+
+            <a href="index.html">
+                Home
+            </a>
+
+            <a href="write.html">
+                Write
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <div class="footer-bottom">
+
+        © 2026 Cataclysm Colony.
+        All rights reserved under Amber.
+
+    </div>
+
+</footer>
+
+
+<script>
+
+
+// ============================================================
+// ELEMENTS
+// ============================================================
+
+const articleContainer =
+    document.getElementById(
+        "articleContainer"
+    );
+
+const headerAccount =
+    document.getElementById(
+        "headerAccount"
+    );
+
+
+// ============================================================
+// STATE
+// ============================================================
+
+let currentArticle = null;
+
+let currentUser = null;
+
+
+// ============================================================
+// URL
+// ============================================================
+
+const params =
+    new URLSearchParams(
+        window.location.search
+    );
+
+const articleId =
+    params.get("id");
+
+
+// ============================================================
+// ESCAPE HTML
+// ============================================================
+
+function escapeHTML(value) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+
+}
+
+
+// ============================================================
+// FORMAT DATE
+// ============================================================
+
+function formatDate(dateString) {
+
+    if (!dateString) {
+        return "";
+    }
+
+
+    const normalized =
+        String(dateString)
+            .replace(" ", "T");
+
+
+    const date =
+        new Date(
+            normalized.endsWith("Z")
+                ? normalized
+                : `${normalized}Z`
+        );
+
+
+    if (
+        Number.isNaN(
+            date.getTime()
+        )
+    ) {
+
+        return dateString;
+
+    }
+
+
+    return date.toLocaleString(
+        undefined,
+        {
+            dateStyle: "medium",
+            timeStyle: "short"
+        }
+    );
+
+}
+
+
+// ============================================================
+// LOAD CURRENT USER
+// ============================================================
+
+async function loadCurrentUser() {
+
+    try {
+
+        const response =
+            await fetch(
+                "/api/me",
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+
+        if (!response.ok) {
+
+            currentUser = null;
+
+            renderHeader();
+
+            return;
+
+        }
+
+
+        currentUser =
+            await response.json();
+
+
+        renderHeader();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "USER LOAD ERROR:",
+            error
+        );
+
+
+        currentUser = null;
+
+        renderHeader();
+
+    }
+
+}
+
+
+// ============================================================
+// HEADER
+// ============================================================
+
+function renderHeader() {
+
+    if (!currentUser) {
+
+        headerAccount.innerHTML = `
+
+            <a
+                href="login.html"
+                class="header-login"
+            >
+                Login
+            </a>
+
+        `;
+
+        return;
+
+    }
+
+
+    headerAccount.innerHTML = `
+
+        <a
+            href="profile.html?username=${encodeURIComponent(
+                currentUser.username
+            )}"
+            class="header-login"
+        >
+
+            ${escapeHTML(
+                currentUser.username
+            )}
+
+        </a>
+
+    `;
+
+}
+
+
+// ============================================================
+// LOAD ARTICLE
+// ============================================================
+
+async function loadArticle() {
+
+    if (!articleId) {
+
+        renderError(
+            "No article was specified."
+        );
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/articles/${encodeURIComponent(
+                    articleId
+                )}`,
+                {
+                    credentials: "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Article could not be found."
+            );
+
+        }
+
+
+        currentArticle = data;
+
+
+        if (
+            !Array.isArray(
+                currentArticle.comments
+            )
+        ) {
+
+            currentArticle.comments = [];
+
+        }
+
+
+        renderArticle(
+            currentArticle
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "ARTICLE LOAD ERROR:",
+            error
+        );
+
+
+        renderError(
+            error.message ||
+            "Article could not be loaded."
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// RENDER ARTICLE
+// ============================================================
+
+function renderArticle(article) {
+
+    document.title =
+        `${article.headline || "Article"} — Cataclysm Colony`;
+
+
+    const verifiedBadge =
+        article.is_verified
+            ? `
+
+                <span
+                    class="verification-badge"
+                    title="Verified"
+                >
+                    ✓
+                </span>
+
+              `
+            : "";
+
+
+    const tags =
+        article.tags
+            ? String(article.tags)
+                .split(",")
+                .map(
+                    tag =>
+                        tag.trim()
+                )
+                .filter(Boolean)
+                .map(
+                    tag => `
+
+                        <a
+                            href="search.html?tag=${encodeURIComponent(
+                                tag
+                            )}"
+                            class="article-tag"
+                        >
+
+                            #${escapeHTML(tag)}
+
+                        </a>
+
+                    `
+                )
+                .join("")
+            : "";
+
+
+    const image =
+        article.image
+            ? `
+
+                <img
+                    class="article-hero-image"
+                    src="${escapeHTML(article.image)}"
+                    alt="${escapeHTML(
+                        article.headline
+                    )}"
+                    loading="eager"
+                >
+
+              `
+            : "";
+
+
+    const comments =
+        renderComments(
+            article.comments
+        );
+
+
+    articleContainer.innerHTML = `
+
+        <article class="article">
+
+
+            <!-- CATEGORY -->
+
+            <div class="article-category">
+
+                ${escapeHTML(
+                    article.category ||
+                    "UNCATEGORIZED"
+                )}
+
+            </div>
+
+
+            <!-- HEADLINE -->
+
+            <h1 class="article-headline">
+
+                ${escapeHTML(
+                    article.headline
+                )}
+
+            </h1>
+
+
+            <!-- SUMMARY -->
+
+            ${
+                article.summary
+                    ? `
+
+                        <p class="article-summary">
+
+                            ${escapeHTML(
+                                article.summary
+                            )}
+
+                        </p>
+
+                      `
+                    : ""
+            }
+
+
+            <!-- AUTHOR -->
+
+            <div class="article-byline">
+
+
+                <a
+                    href="profile.html?username=${encodeURIComponent(
+                        article.username
+                    )}"
+                    class="article-author-avatar"
+                >
+
+                    ${
+                        article.profile_picture
+                            ? `
+
+                                <img
+                                    src="${escapeHTML(
+                                        article.profile_picture
+                                    )}"
+                                    alt=""
+                                >
+
+                              `
+                            : `
+
+                                <span>
+
+                                    ${escapeHTML(
+                                        String(
+                                            article.username ||
+                                            "?"
+                                        )
+                                            .charAt(0)
+                                            .toUpperCase()
+                                    )}
+
+                                </span>
+
+                              `
+                    }
+
+                </a>
+
+
+                <div class="article-author-info">
+
+                    <strong>
+
+                        <a
+                            href="profile.html?username=${encodeURIComponent(
+                                article.username
+                            )}"
+                        >
+
+                            ${escapeHTML(
+                                article.username
+                            )}
+
+                        </a>
+
+                        ${verifiedBadge}
+
+                    </strong>
+
+
+                    <span>
+
+                        Published
+                        ${formatDate(
+                            article.published_at
+                        )}
+
+                    </span>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="article-follow-button"
+                    id="followButton"
+                    onclick="toggleFollow()"
+                >
+                    Follow
+                </button>
+
+
+            </div>
+
+
+            <!-- HERO IMAGE -->
+
+            ${
+                image
+                    ? `
+
+                        <div class="article-hero">
+
+                            ${image}
+
+                        </div>
+
+                      `
+                    : ""
+            }
+
+
+            <!-- TAGS -->
+
+            ${
+                tags
+                    ? `
+
+                        <div class="article-tags">
+
+                            ${tags}
+
+                        </div>
+
+                      `
+                    : ""
+            }
+
+
+            <!-- BODY -->
+
+            <div class="article-body">
+
+                ${article.body || ""}
+
+            </div>
+
+
+            <!-- ACTION BAR -->
+
+            <div class="article-actions">
+
+
+                <button
+                    type="button"
+                    id="likeButton"
+                    class="article-action"
+                    onclick="voteArticle(1)"
+                >
+
+                    Like
+
+                    <span id="likeCount">
+
+                        ${Number(
+                            article.likes || 0
+                        )}
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="dislikeButton"
+                    class="article-action"
+                    onclick="voteArticle(-1)"
+                >
+
+                    Dislike
+
+                    <span id="dislikeCount">
+
+                        ${Number(
+                            article.dislikes || 0
+                        )}
+
+                    </span>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    id="saveButton"
+                    class="article-action"
+                    onclick="toggleSave()"
+                >
+
+                    ${
+                        article.is_saved
+                            ? "Saved"
+                            : "Save"
+                    }
+
+                </button>
+
+
+            </div>
+
+
+            <!-- COMMENTS -->
+
+            <section
+                class="article-comments"
+                id="commentsSection"
+            >
+
+
+                <div class="article-comments-header">
+
+                    <h2>
+                        Comments
+                    </h2>
+
+                    <span id="commentCount">
+
+                        ${article.comments.length}
+
+                    </span>
+
+                </div>
+
+
+                ${
+                    currentUser
+                        ? `
+
+                            <form
+                                id="commentForm"
+                                class="comment-form"
+                                onsubmit="submitComment(event)"
+                            >
+
+                                <textarea
+                                    id="commentInput"
+                                    placeholder="Write a comment..."
+                                    maxlength="5000"
+                                    required
+                                ></textarea>
+
+
+                                <div
+                                    id="replyIndicator"
+                                    class="reply-indicator"
+                                    style="display:none;"
+                                >
+
+                                    Replying to
+                                    <strong id="replyUsername"></strong>
+
+                                    <button
+                                        type="button"
+                                        onclick="cancelReply()"
+                                    >
+                                        Cancel
+                                    </button>
+
+                                </div>
+
+
+                                <button
+                                    type="submit"
+                                    class="admin-button primary"
+                                >
+                                    Post comment
+                                </button>
+
+                            </form>
+
+                          `
+                        : `
+
+                            <div class="comment-login-message">
+
+                                <a href="login.html">
+                                    Log in
+                                </a>
+
+                                to comment.
+
+                            </div>
+
+                          `
+                }
+
+
+                <div
+                    id="commentsList"
+                    class="comments-list"
+                >
+
+                    ${comments}
+
+                </div>
+
+
+            </section>
+
+
+            <!-- ARTICLE FOOTER -->
+
+            <div class="article-footer">
+
+                <a
+                    href="index.html"
+                    class="article-back"
+                >
+
+                    ← Back to Cataclysm Colony
+
+                </a>
+
+            </div>
+
+
+        </article>
+
+    `;
+
+
+    updateVoteButtons();
+
+    updateFollowButton();
+
+}
+
+
+// ============================================================
+// COMMENTS
+// ============================================================
+
+function renderComments(comments) {
+
+    if (
+        !Array.isArray(comments) ||
+        !comments.length
+    ) {
+
+        return `
+
+            <div class="comments-empty">
+
+                No comments yet.
+
+                Be the first to say something.
+
+            </div>
+
+        `;
+
+    }
+
+
+    const topLevelComments =
+        comments.filter(
+            comment =>
+                !comment.parent_id
+        );
+
+
+    return topLevelComments
+        .map(
+            comment =>
+                renderComment(
+                    comment,
+                    comments
+                )
+        )
+        .join("");
+
+}
+
+
+// ============================================================
+// RENDER SINGLE COMMENT
+// ============================================================
+
+function renderComment(
+    comment,
+    allComments
+) {
+
+    const replies =
+        allComments.filter(
+            reply =>
+                Number(
+                    reply.parent_id
+                ) === Number(
+                    comment.id
+                )
+        );
+
+
+    const isOwner =
+        currentUser &&
+        Number(
+            currentUser.id
+        ) === Number(
+            comment.user_id
+        );
+
+
+    const isAdmin =
+        currentUser &&
+        (
+            currentUser.role === "owner" ||
+            currentUser.role === "admin"
+        );
+
+
+    const verifiedBadge =
+        comment.is_verified
+            ? `
+
+                <span
+                    class="verification-badge"
+                    title="Verified"
+                >
+                    ✓
+                </span>
+
+              `
+            : "";
+
+
+    const avatar =
+        comment.profile_picture
+            ? `
+
+                <img
+                    src="${escapeHTML(
+                        comment.profile_picture
+                    )}"
+                    alt=""
+                >
+
+              `
+            : `
+
+                <span>
+
+                    ${escapeHTML(
+                        String(
+                            comment.username ||
+                            "?"
+                        )
+                            .charAt(0)
+                            .toUpperCase()
+                    )}
+
+                </span>
+
+              `;
+
+
+    return `
+
+        <div
+            class="comment"
+            data-comment-id="${Number(
+                comment.id
+            )}"
+        >
+
+
+            <div class="comment-main">
+
+
+                <a
+                    href="profile.html?username=${encodeURIComponent(
+                        comment.username
+                    )}"
+                    class="comment-avatar"
+                >
+
+                    ${avatar}
+
+                </a>
+
+
+                <div class="comment-content">
+
+
+                    <div class="comment-meta">
+
+                        <a
+                            href="profile.html?username=${encodeURIComponent(
+                                comment.username
+                            )}"
+                        >
+
+                            <strong>
+
+                                ${escapeHTML(
+                                    comment.username
+                                )}
+
+                            </strong>
+
+                        </a>
+
+                        ${verifiedBadge}
+
+                        <span>
+
+                            ${formatDate(
+                                comment.created_at
+                            )}
+
+                        </span>
+
+                    </div>
+
+
+                    <div class="comment-text">
+
+                        ${escapeHTML(
+                            comment.body
+                        )}
+
+                    </div>
+
+
+                    <div class="comment-controls">
+
+
+                        ${
+                            currentUser
+                                ? `
+
+                                    <button
+                                        type="button"
+                                        onclick="replyToComment(
+                                            ${Number(comment.id)},
+                                            '${escapeHTML(
+                                                comment.username
+                                            )}'
+                                        )"
+                                    >
+
+                                        Reply
+
+                                    </button>
+
+                                  `
+                                : ""
+                        }
+
+
+                        ${
+                            isOwner || isAdmin
+                                ? `
+
+                                    <button
+                                        type="button"
+                                        onclick="deleteComment(
+                                            ${Number(comment.id)}
+                                        )"
+                                    >
+
+                                        Delete
+
+                                    </button>
+
+                                  `
+                                : ""
+                        }
+
+
+                    </div>
+
+
+                    ${
+                        replies.length
+                            ? `
+
+                                <div class="comment-replies">
+
+                                    ${replies
+                                        .map(
+                                            reply =>
+                                                renderComment(
+                                                    reply,
+                                                    allComments
+                                                )
+                                        )
+                                        .join("")}
+
+                                </div>
+
+                              `
+                            : ""
+                    }
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+    `;
+
+}
+
+
+// ============================================================
+// REFRESH COMMENTS
+// ============================================================
+
+function refreshComments() {
+
+    const commentsList =
+        document.getElementById(
+            "commentsList"
+        );
+
+
+    const commentCount =
+        document.getElementById(
+            "commentCount"
+        );
+
+
+    if (!commentsList) {
+        return;
+    }
+
+
+    const comments =
+        Array.isArray(
+            currentArticle.comments
+        )
+            ? currentArticle.comments
+            : [];
+
+
+    commentsList.innerHTML =
+        renderComments(
+            comments
+        );
+
+
+    if (commentCount) {
+
+        commentCount.textContent =
+            comments.length;
+
+    }
+
+}
+
+
+// ============================================================
+// POST COMMENT
+// ============================================================
+
+async function submitComment(event) {
+
+    event.preventDefault();
+
+
+    if (!currentUser) {
+
+        alert(
+            "You must be logged in to comment."
+        );
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "commentInput"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    const body =
+        input.value.trim();
+
+
+    if (!body) {
+        return;
+    }
+
+
+    const parentId =
+        input.dataset.parentId
+            ? Number(
+                input.dataset.parentId
+            )
+            : null;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/articles/${encodeURIComponent(
+                    articleId
+                )}/comments`,
+                {
+                    method: "POST",
+
+                    credentials:
+                        "same-origin",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+
+                            body,
+
+                            parent_id:
+                                parentId
+
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not post comment."
+            );
+
+        }
+
+
+        currentArticle.comments.push(
+            data
+        );
+
+
+        input.value = "";
+
+        delete input.dataset.parentId;
+
+
+        cancelReply();
+
+
+        refreshComments();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "COMMENT ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// REPLY TO COMMENT
+// ============================================================
+
+function replyToComment(
+    commentId,
+    username
+) {
+
+    if (!currentUser) {
+
+        alert(
+            "You must be logged in to reply."
+        );
+
+        return;
+
+    }
+
+
+    const input =
+        document.getElementById(
+            "commentInput"
+        );
+
+
+    if (!input) {
+        return;
+    }
+
+
+    input.value =
+        `@${username} `;
+
+
+    input.dataset.parentId =
+        String(commentId);
+
+
+    const indicator =
+        document.getElementById(
+            "replyIndicator"
+        );
+
+
+    const replyUsername =
+        document.getElementById(
+            "replyUsername"
+        );
+
+
+    if (indicator) {
+
+        indicator.style.display =
+            "block";
+
+    }
+
+
+    if (replyUsername) {
+
+        replyUsername.textContent =
+            `@${username}`;
+
+    }
+
+
+    input.focus();
+
+}
+
+
+// ============================================================
+// CANCEL REPLY
+// ============================================================
+
+function cancelReply() {
+
+    const input =
+        document.getElementById(
+            "commentInput"
+        );
+
+
+    const indicator =
+        document.getElementById(
+            "replyIndicator"
+        );
+
+
+    const replyUsername =
+        document.getElementById(
+            "replyUsername"
+        );
+
+
+    if (input) {
+
+        delete input.dataset.parentId;
+
+    }
+
+
+    if (indicator) {
+
+        indicator.style.display =
+            "none";
+
+    }
+
+
+    if (replyUsername) {
+
+        replyUsername.textContent =
+            "";
+
+    }
+
+}
+
+
+// ============================================================
+// DELETE COMMENT
+// ============================================================
+
+async function deleteComment(
+    commentId
+) {
+
+    if (
+        !confirm(
+            "Delete this comment?"
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const isAdmin =
+            currentUser &&
+            (
+                currentUser.role === "owner" ||
+                currentUser.role === "admin"
+            );
+
+
+        const endpoint =
+            isAdmin
+                ? `/api/admin/comments/${encodeURIComponent(
+                    commentId
+                )}`
+                : `/api/comments/${encodeURIComponent(
+                    commentId
+                )}`;
+
+
+        const response =
+            await fetch(
+                endpoint,
+                {
+                    method: "DELETE",
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not delete comment."
+            );
+
+        }
+
+
+        currentArticle.comments =
+            currentArticle.comments.filter(
+                comment =>
+                    Number(
+                        comment.id
+                    ) !== Number(
+                        commentId
+                    ) &&
+                    Number(
+                        comment.parent_id
+                    ) !== Number(
+                        commentId
+                    )
+            );
+
+
+        refreshComments();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "DELETE COMMENT ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// VOTE ARTICLE
+// ============================================================
+
+async function voteArticle(
+    value
+) {
+
+    if (!currentUser) {
+
+        alert(
+            "Log in to vote on articles."
+        );
+
+        return;
+
+    }
+
+
+    const currentVote =
+        Number(
+            currentArticle.user_vote || 0
+        );
+
+
+    const newVote =
+        currentVote === value
+            ? 0
+            : value;
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/articles/${encodeURIComponent(
+                    articleId
+                )}/vote`,
+                {
+                    method: "POST",
+
+                    credentials:
+                        "same-origin",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:
+                        JSON.stringify({
+                            vote: newVote
+                        })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not save vote."
+            );
+
+        }
+
+
+        currentArticle.likes =
+            Number(
+                data.likes || 0
+            );
+
+
+        currentArticle.dislikes =
+            Number(
+                data.dislikes || 0
+            );
+
+
+        currentArticle.user_vote =
+            Number(
+                data.user_vote || 0
+            );
+
+
+        const likeCount =
+            document.getElementById(
+                "likeCount"
+            );
+
+
+        const dislikeCount =
+            document.getElementById(
+                "dislikeCount"
+            );
+
+
+        if (likeCount) {
+
+            likeCount.textContent =
+                currentArticle.likes;
+
+        }
+
+
+        if (dislikeCount) {
+
+            dislikeCount.textContent =
+                currentArticle.dislikes;
+
+        }
+
+
+        updateVoteButtons();
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "VOTE ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// UPDATE VOTE BUTTONS
+// ============================================================
+
+function updateVoteButtons() {
+
+    if (!currentArticle) {
+        return;
+    }
+
+
+    const likeButton =
+        document.getElementById(
+            "likeButton"
+        );
+
+
+    const dislikeButton =
+        document.getElementById(
+            "dislikeButton"
+        );
+
+
+    if (
+        !likeButton ||
+        !dislikeButton
+    ) {
+
+        return;
+
+    }
+
+
+    const vote =
+        Number(
+            currentArticle.user_vote || 0
+        );
+
+
+    likeButton.classList.toggle(
+        "active",
+        vote === 1
+    );
+
+
+    dislikeButton.classList.toggle(
+        "active",
+        vote === -1
+    );
+
+}
+
+
+// ============================================================
+// SAVE / UNSAVE
+// ============================================================
+
+async function toggleSave() {
+
+    if (!currentUser) {
+
+        alert(
+            "Log in to save articles."
+        );
+
+        return;
+
+    }
+
+
+    const currentlySaved =
+        Boolean(
+            currentArticle.is_saved
+        );
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/articles/${encodeURIComponent(
+                    articleId
+                )}/save`,
+                {
+                    method:
+                        currentlySaved
+                            ? "DELETE"
+                            : "POST",
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not update saved article."
+            );
+
+        }
+
+
+        currentArticle.is_saved =
+            Boolean(
+                data.is_saved
+            );
+
+
+        const button =
+            document.getElementById(
+                "saveButton"
+            );
+
+
+        if (button) {
+
+            button.textContent =
+                currentArticle.is_saved
+                    ? "Saved"
+                    : "Save";
+
+        }
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "SAVE ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// FOLLOW / UNFOLLOW
+// ============================================================
+
+async function toggleFollow() {
+
+    if (!currentUser) {
+
+        alert(
+            "Log in to follow authors."
+        );
+
+        return;
+
+    }
+
+
+    if (
+        String(
+            currentUser.username
+        ).toLowerCase() ===
+        String(
+            currentArticle.username
+        ).toLowerCase()
+    ) {
+
+        alert(
+            "You cannot follow yourself."
+        );
+
+        return;
+
+    }
+
+
+    const button =
+        document.getElementById(
+            "followButton"
+        );
+
+
+    const currentlyFollowing =
+        button &&
+        button.dataset.following ===
+            "true";
+
+
+    try {
+
+        const response =
+            await fetch(
+                `/api/follow/${encodeURIComponent(
+                    currentArticle.username
+                )}`,
+                {
+                    method:
+                        currentlyFollowing
+                            ? "DELETE"
+                            : "POST",
+
+                    credentials:
+                        "same-origin"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                data.error ||
+                "Could not update follow status."
+            );
+
+        }
+
+
+        updateFollowButton(
+            Boolean(
+                data.is_following
+            )
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "FOLLOW ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message
+        );
+
+    }
+
+}
+
+
+// ============================================================
+// FOLLOW BUTTON
+// ============================================================
+
+function updateFollowButton(
+    following = null
+) {
+
+    const button =
+        document.getElementById(
+            "followButton"
+        );
+
+
+    if (!button) {
+        return;
+    }
+
+
+    if (!currentUser) {
+
+        button.textContent =
+            "Follow";
+
+        button.dataset.following =
+            "false";
+
+        return;
+
+    }
+
+
+    if (
+        String(
+            currentUser.username
+        ).toLowerCase() ===
+        String(
+            currentArticle.username
+        ).toLowerCase()
+    ) {
+
+        button.style.display =
+            "none";
+
+        return;
+
+    }
+
+
+    if (following !== null) {
+
+        button.textContent =
+            following
+                ? "Following"
+                : "Follow";
+
+
+        button.dataset.following =
+            String(
+                following
+            );
+
+
+        return;
+
+    }
+
+
+    fetch(
+        `/api/profile/${encodeURIComponent(
+            currentArticle.username
+        )}`,
+        {
+            credentials:
+                "same-origin"
+        }
+    )
+    .then(
+        response => {
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Could not load profile."
+                );
+
+            }
+
+            return response.json();
+
+        }
+    )
+    .then(
+        profile => {
+
+            const isFollowing =
+                Boolean(
+                    profile.is_following
+                );
+
+
+            button.textContent =
+                isFollowing
+                    ? "Following"
+                    : "Follow";
+
+
+            button.dataset.following =
+                String(
+                    isFollowing
+                );
+
+        }
+    )
+    .catch(
+        error => {
+
+            console.error(
+                "FOLLOW STATUS ERROR:",
+                error
+            );
+
+        }
+    );
+
+}
+
+
+// ============================================================
+// ERROR
+// ============================================================
+
+function renderError(
+    message
+) {
+
+    articleContainer.innerHTML = `
+
+        <div class="article-error">
+
+            <div class="empty-icon">
+                !
+            </div>
+
+
+            <h1>
+                Article unavailable
+            </h1>
+
+
+            <p>
+
+                ${escapeHTML(
+                    message ||
+                    "Something went wrong."
+                )}
+
+            </p>
+
+
+            <a
+                href="index.html"
+                class="admin-refresh"
+            >
+
+                Return home
+
+            </a>
+
+        </div>
+
+    `;
+
+}
+
+
+// ============================================================
+// START
+// ============================================================
+
+async function startArticlePage() {
+
+    await loadCurrentUser();
+
+    await loadArticle();
+
+}
+
+
+startArticlePage();
+
+
+</script>
+
+
+<script src="notifications.js"></script>
+</body>
+
+</html>
