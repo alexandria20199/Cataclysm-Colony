@@ -82,7 +82,7 @@ app.use(express.urlencoded({
 
 app.use(
     session({
-        secret: "cataclysm-calumny-development-secret",
+        secret: process.env.SESSION_SECRET,
         resave: false,
         saveUninitialized: false,
 
