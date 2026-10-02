@@ -53,7 +53,7 @@
             <section class="notification-panel" hidden>
                 <div class="notification-panel-heading"><strong>NEWSROOM ALERTS</strong>${unread ? '<button type="button" class="notification-read-button">Mark all read</button>' : ""}</div>
                 <div class="notification-list">
-                    ${items.length ? items.map(item => `<a class="notification-item ${item.is_read ? "" : "unread"}" href="${escapeHTML(item.link || "#")}"><span class="notification-type">${escapeHTML(item.type || "update")}</span><strong>${escapeHTML(item.title)}</strong><p>${escapeHTML(item.message)}</p><small>${escapeHTML(formatDate(item.created_at))}</small></a>`).join("") : '<div class="notification-empty">No alerts yet. The newsroom is quiet.</div>'}
+                    ${items.length ? items.map(item => `<a class="notification-item ${item.is_read ? "" : "unread"}" href="${escapeHTML(item.link || "#")}">${typeof item.image_url === "string" && item.image_url.startsWith("https://") ? `<img class="notification-image" src="${escapeHTML(item.image_url)}" alt="" loading="lazy">` : ""}<span class="notification-type">${escapeHTML(item.type || "update")}</span><strong>${escapeHTML(item.title)}</strong><p>${escapeHTML(item.message)}</p><small>${escapeHTML(formatDate(item.created_at))}</small></a>`).join("") : '<div class="notification-empty">No alerts yet. The newsroom is quiet.</div>'}
                 </div>
             </section>`;
         accountArea.prepend(center);

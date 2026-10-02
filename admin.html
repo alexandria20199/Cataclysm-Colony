@@ -324,12 +324,30 @@
                 ></textarea>
             </label>
 
+            <label>
+                <span>Optional announcement image</span>
+                <input id="announcementImage" type="file" accept="image/png,image/jpeg,image/webp,image/gif">
+            </label>
+            <img id="announcementImagePreview" alt="Announcement image preview" hidden style="max-width:240px;max-height:160px;border-radius:10px;object-fit:cover">
+
             <button class="approve-button" type="submit">
                 Send to everyone
             </button>
 
         </form>
 
+    </section>
+
+    <section id="newsroomChatSection" class="admin-section" hidden>
+        <div class="admin-section-heading">
+            <div><span class="section-kicker">PRIVATE STAFF CHAT</span><h2>Newsroom chat</h2><p>Messages are encrypted before they are stored. Only Owners and Admins can access this room.</p></div>
+        </div>
+        <div id="newsroomChatMessages" role="log" aria-live="polite" style="max-height:360px;overflow:auto;padding:14px;border:1px solid #ddd;border-radius:12px"></div>
+        <form id="newsroomChatForm" class="announcement-form" style="margin-top:14px">
+            <label><span>Message</span><textarea id="newsroomChatInput" maxlength="2000" required placeholder="Write a private newsroom message..."></textarea></label>
+            <button class="approve-button" type="submit">Send message</button>
+            <button class="admin-refresh" id="refreshNewsroomChat" type="button">Refresh chat</button>
+        </form>
     </section>
 
 
@@ -743,6 +761,22 @@ const announcementTitle =
 
 const announcementMessage =
     document.getElementById("announcementMessage");
+
+const announcementImageInput = document.getElementById("announcementImage");
+const announcementImagePreview = document.getElementById("announcementImagePreview");
+const newsroomChatSection = document.getElementById("newsroomChatSection");
+const newsroomChatMessages = document.getElementById("newsroomChatMessages");
+const newsroomChatForm = document.getElementById("newsroomChatForm");
+const newsroomChatInput = document.getElementById("newsroomChatInput");
+
+function readImageData(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ""));
+        reader.onerror = () => reject(new Error("Could not read the selected image."));
+        reader.readAsDataURL(file);
+    });
+}
 
 
 /* ============================================================
@@ -1761,12 +1795,17 @@ async function sendAnnouncement(event) {
 
     try {
 
+        const imageFile = announcementImageInput?.files?.[0];
+        if (imageFile && imageFile.size > 8 * 1024 * 1024) throw new Error("Choose an image smaller than 8 MB.");
+        const image = imageFile ? await readImageData(imageFile) : "";
+
         const response = await fetch("/api/owner/announcements", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 title: announcementTitle.value.trim(),
-                message: announcementMessage.value.trim()
+                message: announcementMessage.value.trim(),
+                image
             })
         });
 
@@ -1777,6 +1816,8 @@ async function sendAnnouncement(event) {
         }
 
         announcementForm.reset();
+        announcementImagePreview.hidden = true;
+        announcementImagePreview.removeAttribute("src");
         showMessage(data.message || "Announcement sent.", "success");
 
     } catch (error) {
@@ -1791,6 +1832,59 @@ async function sendAnnouncement(event) {
     }
 }
 
+
+async function refreshNewsroomChat() {
+    if (!newsroomChatMessages) return;
+    const response = await fetch("/api/newsroom/messages", { credentials: "same-origin" });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || "Could not load newsroom chat.");
+    newsroomChatMessages.replaceChildren();
+    for (const item of data.messages || []) {
+        const row = document.createElement("article");
+        row.style.cssText = "padding:10px 4px;border-bottom:1px solid #e5e5e5";
+        const heading = document.createElement("strong");
+        heading.textContent = `${item.username} · ${new Date(item.created_at).toLocaleString()}`;
+        const body = document.createElement("p");
+        body.textContent = item.message;
+        row.append(heading, body);
+        newsroomChatMessages.append(row);
+    }
+    newsroomChatMessages.scrollTop = newsroomChatMessages.scrollHeight;
+}
+
+async function loadNewsroomChatAccess() {
+    try {
+        const response = await fetch("/api/me", { credentials: "same-origin" });
+        if (!response.ok) return;
+        const user = await response.json();
+        if (user.role !== "owner" && user.role !== "admin") return;
+        newsroomChatSection.hidden = false;
+        await refreshNewsroomChat();
+    } catch (error) {
+        if (newsroomChatMessages) newsroomChatMessages.textContent = error.message;
+    }
+}
+
+newsroomChatForm?.addEventListener("submit", async event => {
+    event.preventDefault();
+    const button = newsroomChatForm.querySelector("button[type='submit']");
+    button.disabled = true;
+    try {
+        const response = await fetch("/api/newsroom/messages", {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ message: newsroomChatInput.value.trim() })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Could not send the message.");
+        newsroomChatInput.value = "";
+        await refreshNewsroomChat();
+    } catch (error) { showMessage(error.message, "error"); }
+    finally { button.disabled = false; }
+});
+
+document.getElementById("refreshNewsroomChat")?.addEventListener("click", () => {
+    refreshNewsroomChat().catch(error => showMessage(error.message, "error"));
+});
 
 async function deleteArticle(
     id,
@@ -2643,6 +2737,19 @@ document.getElementById("refreshArticleArchiveButton")?.addEventListener(
 
 announcementForm?.addEventListener("submit", sendAnnouncement);
 
+announcementImageInput?.addEventListener("change", () => {
+    const file = announcementImageInput.files?.[0];
+    if (!file) { announcementImagePreview.hidden = true; announcementImagePreview.removeAttribute("src"); return; }
+    if (!file.type.startsWith("image/") || file.size > 8 * 1024 * 1024) {
+        announcementImageInput.value = "";
+        announcementImagePreview.hidden = true;
+        showMessage("Choose an image smaller than 8 MB.", "error");
+        return;
+    }
+    announcementImagePreview.src = URL.createObjectURL(file);
+    announcementImagePreview.hidden = false;
+});
+
 
 /* ============================================================
    INITIAL LOAD
@@ -2657,6 +2764,7 @@ loadHomepageCuration();
 loadArticleArchive();
 
 loadAnnouncementAccess();
+loadNewsroomChatAccess();
 
 </script>
 

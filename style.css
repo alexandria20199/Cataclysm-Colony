@@ -1607,6 +1607,15 @@ select:focus-visible {
     border-bottom: 0;
 }
 
+.notification-image {
+    display: block;
+    width: 100%;
+    max-height: 140px;
+    margin-bottom: 10px;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
 .notification-item.unread {
     background: #fff7f7;
 }

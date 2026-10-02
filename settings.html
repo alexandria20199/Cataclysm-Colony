@@ -46,10 +46,13 @@
         </section>
 
         <section class="settings-card">
-            <div class="settings-card-heading"><div><span>SECURITY</span><h2>Change password</h2><p>Use at least eight characters and confirm your current password.</p></div></div>
+            <div class="settings-card-heading"><div><span>SECURITY</span><h2>Change password</h2><p>Email verification is temporarily unavailable while the site’s sender is being set up.</p></div></div>
             <form id="passwordForm" class="settings-form">
                 <label for="currentPassword">Current password</label>
                 <input id="currentPassword" type="password" autocomplete="current-password" required>
+                <button id="requestPasswordCode" type="button" class="settings-save">Email me a verification code</button>
+                <label for="passwordCode">Email verification code</label>
+                <input id="passwordCode" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]{6}" maxlength="6" required>
                 <label for="newPassword">New password</label>
                 <input id="newPassword" type="password" autocomplete="new-password" minlength="8" required>
                 <label for="confirmPassword">Confirm new password</label>
@@ -100,8 +103,14 @@
             const button = event.submitter;
             if ($("#newPassword").value !== $("#confirmPassword").value) { message("The new passwords do not match.", "error"); return; }
             button.disabled = true;
-            try { const data = await request("/api/me/password", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ current_password: $("#currentPassword").value, new_password: $("#newPassword").value }) }); event.target.reset(); message(data.message, "success"); }
+            try { const data = await request("/api/me/password", { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ current_password: $("#currentPassword").value, code: $("#passwordCode").value, new_password: $("#newPassword").value }) }); event.target.reset(); message(data.message, "success"); }
             catch (error) { message(error.message, "error"); } finally { button.disabled = false; }
+        });
+        $("#requestPasswordCode").addEventListener("click", async event => {
+            const button = event.currentTarget; button.disabled = true;
+            try { const data = await request("/api/password/change/request", { method: "POST" }); message(data.message, "success"); }
+            catch (error) { message(error.message, "error"); }
+            finally { button.disabled = false; }
         });
         document.querySelectorAll("[data-theme-choice]").forEach(button => {
             button.addEventListener("click", () => { window.CataclysmTheme.set(button.dataset.themeChoice); updateThemeOptions(); });
