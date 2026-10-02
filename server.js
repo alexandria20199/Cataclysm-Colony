@@ -577,7 +577,7 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
     const pathname = req.path;
-    const allowed = new Set(["index.html", "login.html", "register.html", "profile.html", "article.html", "write.html", "admin.html", "settings.html", "login.js", "register.js", "profile.js", "write.js", "theme.js", "notifications.js", "style.css"]);
+        const allowed = new Set(["index.html", "login.html", "register.html", "profile.html", "article.html", "write.html", "admin.html", "settings.html", "editorial-policy.html", "login.js", "register.js", "profile.js", "write.js", "theme.js", "notifications.js", "style.css"]);
     if (pathname.startsWith("/api/")) return next();
     if (pathname === "/") return res.redirect("/index.html");
     if (pathname.startsWith("/images/") || pathname.startsWith("/uploads/")) return next();
@@ -1430,6 +1430,131 @@ app.post("/api/newsroom/messages", requireAdmin, rateLimit("newsroom-chat", 30, 
     } catch (error) {
         console.error("NEWSROOM CHAT WRITE ERROR:", error);
         res.status(500).json({ error: "Could not save newsroom message." });
+    }
+});
+
+// ============================================================
+// PRIVATE STAFF CHAT
+// ============================================================
+
+app.get("/api/staff/chat/people", requireAdmin, async (req, res) => {
+    try {
+        const result = await query(`SELECT id, username, role, profile_picture FROM users
+            WHERE role IN ('owner', 'admin') AND id <> $1 ORDER BY LOWER(username)`, [req.currentUser.id]);
+        res.json({ people: result.rows });
+    } catch (error) {
+        console.error("STAFF CHAT PEOPLE ERROR:", error);
+        res.status(500).json({ error: "Could not load staff members." });
+    }
+});
+
+app.get("/api/staff/chat/conversations", requireAdmin, async (req, res) => {
+    if (!getChatKey()) return res.status(503).json({ error: "Staff chat is not configured." });
+    try {
+        const result = await query(`SELECT c.id, c.title, c.is_group, c.created_at,
+            (SELECT string_agg(u.username, ', ' ORDER BY LOWER(u.username)) FROM staff_conversation_members cm
+                JOIN users u ON u.id = cm.user_id WHERE cm.conversation_id = c.id AND cm.user_id <> $1) AS participants,
+            last_message.ciphertext, last_message.iv, last_message.auth_tag, last_message.created_at AS last_message_at,
+            sender.username AS last_sender
+            FROM staff_conversations c
+            JOIN staff_conversation_members mine ON mine.conversation_id = c.id AND mine.user_id = $1
+            LEFT JOIN LATERAL (SELECT m.ciphertext, m.iv, m.auth_tag, m.created_at, m.sender_id
+                FROM staff_chat_messages m WHERE m.conversation_id = c.id ORDER BY m.id DESC LIMIT 1) last_message ON TRUE
+            LEFT JOIN users sender ON sender.id = last_message.sender_id
+            ORDER BY COALESCE(last_message.created_at, c.created_at) DESC`, [req.currentUser.id]);
+        const conversations = result.rows.map(row => ({
+            id: row.id,
+            title: row.is_group ? row.title : (row.participants || "Staff chat"),
+            is_group: row.is_group,
+            participants: row.participants || "",
+            updated_at: row.last_message_at || row.created_at,
+            preview: row.ciphertext ? decryptChatMessage(row) : "Start the conversation",
+            last_sender: row.last_sender || ""
+        }));
+        res.json({ conversations });
+    } catch (error) {
+        console.error("STAFF CHAT LIST ERROR:", error);
+        res.status(500).json({ error: "Could not load staff conversations." });
+    }
+});
+
+app.post("/api/staff/chat/conversations", requireAdmin, rateLimit("staff-chat-create", 15, 60 * 60 * 1000), async (req, res) => {
+    const memberIds = Array.isArray(req.body.member_ids)
+        ? [...new Set(req.body.member_ids.map(Number).filter(id => Number.isSafeInteger(id) && id > 0 && id !== req.currentUser.id))]
+        : [];
+    const title = typeof req.body.title === "string" ? req.body.title.trim() : "";
+    if (!getChatKey()) return res.status(503).json({ error: "Staff chat is not configured." });
+    if (!memberIds.length || memberIds.length > 30) return res.status(400).json({ error: "Choose at least one staff member." });
+    const isGroup = memberIds.length > 1;
+    if (isGroup && (title.length < 2 || title.length > 60)) return res.status(400).json({ error: "Group names must be 2 to 60 characters." });
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        const eligible = await client.query("SELECT id FROM users WHERE id = ANY($1::int[]) AND role IN ('owner', 'admin')", [memberIds]);
+        if (eligible.rowCount !== memberIds.length) {
+            await client.query("ROLLBACK");
+            return res.status(400).json({ error: "Only current Admins and the Owner can be added to staff chat." });
+        }
+        if (!isGroup) {
+            const existing = await client.query(`SELECT c.id FROM staff_conversations c
+                WHERE c.is_group = FALSE
+                AND EXISTS (SELECT 1 FROM staff_conversation_members a WHERE a.conversation_id = c.id AND a.user_id = $1)
+                AND EXISTS (SELECT 1 FROM staff_conversation_members b WHERE b.conversation_id = c.id AND b.user_id = $2)
+                AND (SELECT COUNT(*) FROM staff_conversation_members x WHERE x.conversation_id = c.id) = 2
+                LIMIT 1`, [req.currentUser.id, memberIds[0]]);
+            if (existing.rows[0]) {
+                await client.query("COMMIT");
+                return res.json({ id: existing.rows[0].id, existing: true });
+            }
+        }
+        const created = await client.query("INSERT INTO staff_conversations (title, is_group, created_by) VALUES ($1, $2, $3) RETURNING id", [isGroup ? title : "", isGroup, req.currentUser.id]);
+        const conversationId = created.rows[0].id;
+        for (const userId of [req.currentUser.id, ...memberIds]) {
+            await client.query("INSERT INTO staff_conversation_members (conversation_id, user_id) VALUES ($1, $2)", [conversationId, userId]);
+        }
+        await client.query("COMMIT");
+        res.status(201).json({ id: conversationId, existing: false });
+    } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        console.error("STAFF CHAT CREATE ERROR:", error);
+        res.status(500).json({ error: "Could not create the conversation." });
+    } finally {
+        client.release();
+    }
+});
+
+app.get("/api/staff/chat/conversations/:id/messages", requireAdmin, async (req, res) => {
+    if (!/^\d+$/.test(req.params.id)) return res.status(400).json({ error: "Invalid conversation." });
+    if (!getChatKey()) return res.status(503).json({ error: "Staff chat is not configured." });
+    try {
+        const membership = await query("SELECT 1 FROM staff_conversation_members WHERE conversation_id = $1 AND user_id = $2", [req.params.id, req.currentUser.id]);
+        if (!membership.rowCount) return res.status(404).json({ error: "Conversation not found." });
+        const result = await query(`SELECT m.id, m.ciphertext, m.iv, m.auth_tag, m.created_at, u.username
+            FROM staff_chat_messages m JOIN users u ON u.id = m.sender_id
+            WHERE m.conversation_id = $1 ORDER BY m.id DESC LIMIT 100`, [req.params.id]);
+        res.json({ messages: result.rows.reverse().map(row => ({ id: row.id, username: row.username, message: decryptChatMessage(row), created_at: row.created_at })) });
+    } catch (error) {
+        console.error("STAFF CHAT HISTORY ERROR:", error);
+        res.status(500).json({ error: "Could not load this conversation." });
+    }
+});
+
+app.post("/api/staff/chat/conversations/:id/messages", requireAdmin, rateLimit("staff-chat-message", 60, 60 * 60 * 1000), async (req, res) => {
+    const message = typeof req.body.message === "string" ? req.body.message.trim() : "";
+    if (!/^\d+$/.test(req.params.id)) return res.status(400).json({ error: "Invalid conversation." });
+    if (!message || message.length > 2000) return res.status(400).json({ error: "Messages must be between 1 and 2,000 characters." });
+    if (!getChatKey()) return res.status(503).json({ error: "Staff chat is not configured." });
+    try {
+        const membership = await query("SELECT 1 FROM staff_conversation_members WHERE conversation_id = $1 AND user_id = $2", [req.params.id, req.currentUser.id]);
+        if (!membership.rowCount) return res.status(404).json({ error: "Conversation not found." });
+        const encrypted = encryptChatMessage(message);
+        const result = await query(`INSERT INTO staff_chat_messages (conversation_id, sender_id, ciphertext, iv, auth_tag)
+            VALUES ($1, $2, $3, $4, $5) RETURNING id, created_at`,
+            [req.params.id, req.currentUser.id, encrypted.ciphertext, encrypted.iv, encrypted.auth_tag]);
+        res.status(201).json({ message: { id: result.rows[0].id, username: req.currentUser.username, message, created_at: result.rows[0].created_at } });
+    } catch (error) {
+        console.error("STAFF CHAT SEND ERROR:", error);
+        res.status(500).json({ error: "Could not send the message." });
     }
 });
 
@@ -2975,6 +3100,9 @@ app.get(
             res.json({
                 current_user_id:
                     currentUser.id,
+
+                current_user_role:
+                    currentUser.role,
 
                 users:
                     result.rows

@@ -73,13 +73,6 @@
                 Write
             </a>
 
-            <a
-                href="admin.html"
-                class="active"
-            >
-                Editorial Desk
-            </a>
-
         </nav>
 
 
@@ -337,19 +330,6 @@
         </form>
 
     </section>
-
-    <section id="newsroomChatSection" class="admin-section" hidden>
-        <div class="admin-section-heading">
-            <div><span class="section-kicker">PRIVATE STAFF CHAT</span><h2>Newsroom chat</h2><p>Messages are encrypted before they are stored. Only Owners and Admins can access this room.</p></div>
-        </div>
-        <div id="newsroomChatMessages" role="log" aria-live="polite" style="max-height:360px;overflow:auto;padding:14px;border:1px solid #ddd;border-radius:12px"></div>
-        <form id="newsroomChatForm" class="announcement-form" style="margin-top:14px">
-            <label><span>Message</span><textarea id="newsroomChatInput" maxlength="2000" required placeholder="Write a private newsroom message..."></textarea></label>
-            <button class="approve-button" type="submit">Send message</button>
-            <button class="admin-refresh" id="refreshNewsroomChat" type="button">Refresh chat</button>
-        </form>
-    </section>
-
 
     <!-- =====================================================
          HOMEPAGE CURATION
@@ -691,6 +671,10 @@
                 Profile
             </a>
 
+            <a href="editorial-policy.html">Editorial Policy</a>
+
+            <span>Contact: N/A</span>
+
         </div>
 
     </div>
@@ -749,6 +733,7 @@ const articleArchiveList =
     document.getElementById("articleArchiveList");
 
 let editorialUser = null;
+let userManagementRole = "admin";
 
 const announcementSection =
     document.getElementById("announcementSection");
@@ -764,10 +749,6 @@ const announcementMessage =
 
 const announcementImageInput = document.getElementById("announcementImage");
 const announcementImagePreview = document.getElementById("announcementImagePreview");
-const newsroomChatSection = document.getElementById("newsroomChatSection");
-const newsroomChatMessages = document.getElementById("newsroomChatMessages");
-const newsroomChatForm = document.getElementById("newsroomChatForm");
-const newsroomChatInput = document.getElementById("newsroomChatInput");
 
 function readImageData(file) {
     return new Promise((resolve, reject) => {
@@ -1833,59 +1814,6 @@ async function sendAnnouncement(event) {
 }
 
 
-async function refreshNewsroomChat() {
-    if (!newsroomChatMessages) return;
-    const response = await fetch("/api/newsroom/messages", { credentials: "same-origin" });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || "Could not load newsroom chat.");
-    newsroomChatMessages.replaceChildren();
-    for (const item of data.messages || []) {
-        const row = document.createElement("article");
-        row.style.cssText = "padding:10px 4px;border-bottom:1px solid #e5e5e5";
-        const heading = document.createElement("strong");
-        heading.textContent = `${item.username} · ${new Date(item.created_at).toLocaleString()}`;
-        const body = document.createElement("p");
-        body.textContent = item.message;
-        row.append(heading, body);
-        newsroomChatMessages.append(row);
-    }
-    newsroomChatMessages.scrollTop = newsroomChatMessages.scrollHeight;
-}
-
-async function loadNewsroomChatAccess() {
-    try {
-        const response = await fetch("/api/me", { credentials: "same-origin" });
-        if (!response.ok) return;
-        const user = await response.json();
-        if (user.role !== "owner" && user.role !== "admin") return;
-        newsroomChatSection.hidden = false;
-        await refreshNewsroomChat();
-    } catch (error) {
-        if (newsroomChatMessages) newsroomChatMessages.textContent = error.message;
-    }
-}
-
-newsroomChatForm?.addEventListener("submit", async event => {
-    event.preventDefault();
-    const button = newsroomChatForm.querySelector("button[type='submit']");
-    button.disabled = true;
-    try {
-        const response = await fetch("/api/newsroom/messages", {
-            method: "POST", headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: newsroomChatInput.value.trim() })
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok) throw new Error(data.error || "Could not send the message.");
-        newsroomChatInput.value = "";
-        await refreshNewsroomChat();
-    } catch (error) { showMessage(error.message, "error"); }
-    finally { button.disabled = false; }
-});
-
-document.getElementById("refreshNewsroomChat")?.addEventListener("click", () => {
-    refreshNewsroomChat().catch(error => showMessage(error.message, "error"));
-});
-
 async function deleteArticle(
     id,
     button
@@ -2057,6 +1985,8 @@ async function loadUsers() {
                 ? data
                 : data.users || [];
 
+        userManagementRole = data.current_user_role || editorialUser?.role || "admin";
+
 
         const total =
             users.length;
@@ -2173,11 +2103,11 @@ function createUserCard(user) {
 
     const isAdmin =
         user.role === "admin" ||
-        user.is_admin === 1;
+        Number(user.is_admin) === 1;
 
 
     const isVerified =
-        user.is_verified === 1;
+        Number(user.is_verified) === 1 || user.is_verified === true;
 
 
     const avatar =
@@ -2274,6 +2204,18 @@ function createUserCard(user) {
                 Protected owner
             </span>
 
+        `;
+
+    }
+
+    else if (userManagementRole === "owner") {
+
+        actionHTML = `
+            <div class="user-management-actions">
+                <button class="admin-refresh" type="button" onclick="setUserRole(${user.id}, ${isAdmin ? "false" : "true"}, this)">${isAdmin ? "Remove admin" : "Make admin"}</button>
+                <button class="${isVerified ? "delete-user-button" : "admin-refresh"}" type="button" onclick="setUserVerification(${user.id}, ${isVerified ? "false" : "true"}, this)">${isVerified ? "Remove verification" : "Verify account"}</button>
+                ${!isAdmin ? `<button class="delete-user-button" type="button" onclick="deleteUser(${user.id}, '${escapeJS(user.username)}', this)">Delete account</button>` : ""}
+            </div>
         `;
 
     }
@@ -2396,6 +2338,33 @@ function createUserCard(user) {
 
     `;
 
+}
+
+async function setUserRole(id, promote, button) {
+    const action = promote ? "promote" : "demote";
+    if (!confirm(promote ? "Give this account administrator access?" : "Remove this account's administrator access?")) return;
+    button.disabled = true;
+    try {
+        const response = await fetch(`/api/owner/users/${id}/${action}`, { method: "POST", credentials: "same-origin" });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Could not update administrator access.");
+        showMessage(data.message, "success");
+        await loadUsers();
+    } catch (error) { showMessage(error.message, "error"); }
+    finally { button.disabled = false; }
+}
+
+async function setUserVerification(id, verified, button) {
+    if (!confirm(verified ? "Verify this account?" : "Remove this account's verification badge?")) return;
+    button.disabled = true;
+    try {
+        const response = await fetch(`/api/owner/users/${id}/verify`, { method: verified ? "POST" : "DELETE", credentials: "same-origin" });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Could not update verification.");
+        showMessage(data.message, "success");
+        await loadUsers();
+    } catch (error) { showMessage(error.message, "error"); }
+    finally { button.disabled = false; }
 }
 
 
@@ -2764,7 +2733,6 @@ loadHomepageCuration();
 loadArticleArchive();
 
 loadAnnouncementAccess();
-loadNewsroomChatAccess();
 
 </script>
 

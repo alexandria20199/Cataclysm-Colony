@@ -156,6 +156,33 @@ async function initializeDatabase() {
         CREATE INDEX IF NOT EXISTS idx_newsroom_messages_created
             ON newsroom_messages(created_at DESC);
 
+        CREATE TABLE IF NOT EXISTS staff_conversations (
+            id BIGSERIAL PRIMARY KEY,
+            title TEXT NOT NULL DEFAULT '',
+            is_group BOOLEAN NOT NULL DEFAULT FALSE,
+            created_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE TABLE IF NOT EXISTS staff_conversation_members (
+            conversation_id BIGINT NOT NULL REFERENCES staff_conversations(id) ON DELETE CASCADE,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            added_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (conversation_id, user_id)
+        );
+        CREATE INDEX IF NOT EXISTS idx_staff_conversation_members_user
+            ON staff_conversation_members(user_id, conversation_id);
+        CREATE TABLE IF NOT EXISTS staff_chat_messages (
+            id BIGSERIAL PRIMARY KEY,
+            conversation_id BIGINT NOT NULL REFERENCES staff_conversations(id) ON DELETE CASCADE,
+            sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            ciphertext TEXT NOT NULL,
+            iv TEXT NOT NULL,
+            auth_tag TEXT NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_staff_chat_messages_conversation
+            ON staff_chat_messages(conversation_id, id DESC);
+
         CREATE TABLE IF NOT EXISTS rate_limit_buckets (
             bucket_key TEXT PRIMARY KEY,
             hits INTEGER NOT NULL,
