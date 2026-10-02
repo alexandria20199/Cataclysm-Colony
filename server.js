@@ -3,7 +3,7 @@ const bcrypt = require("bcrypt");
 const session = require("express-session");
 const crypto = require("crypto");
 const path = require("path");
-const { query, initializeDatabase } = require("./database-pg");
+const { pool, query, initializeDatabase } = require("./database-pg");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -55,6 +55,31 @@ function passwordCodeHash(code) {
     const secret = process.env.PASSWORD_CODE_SECRET || process.env.SESSION_SECRET;
     if (!secret) throw new Error("Password verification secret is not configured.");
     return crypto.createHmac("sha256", secret).update(String(code)).digest("hex");
+}
+
+function generateRecoveryCodes(count = 10) {
+    return Array.from({ length: count }, () => crypto.randomBytes(16).toString("hex").toUpperCase());
+}
+
+function recoveryCodeHash(code) {
+    return passwordCodeHash(`recovery:${String(code).replace(/[-\s]/g, "").toUpperCase()}`);
+}
+
+async function replaceRecoveryCodes(userId, codes) {
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        await client.query("UPDATE password_recovery_codes SET used_at = CURRENT_TIMESTAMP WHERE user_id = $1 AND used_at IS NULL", [userId]);
+        for (const code of codes) {
+            await client.query("INSERT INTO password_recovery_codes (user_id, code_hash) VALUES ($1, $2)", [userId, recoveryCodeHash(code)]);
+        }
+        await client.query("COMMIT");
+    } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        throw error;
+    } finally {
+        client.release();
+    }
 }
 
 async function sendVerificationEmail(email, code, purpose) {
@@ -1006,8 +1031,6 @@ app.put(
                 ? req.body.current_password
                 : "";
 
-        const verificationCode = typeof req.body.code === "string" ? req.body.code.trim() : "";
-
         const newPassword =
             typeof req.body.new_password === "string"
                 ? req.body.new_password
@@ -1015,8 +1038,7 @@ app.put(
 
         if (
             !currentPassword ||
-            !newPassword ||
-            !/^\d{6}$/.test(verificationCode)
+            !newPassword
         ) {
 
             return res.status(400).json({
@@ -1060,10 +1082,6 @@ app.put(
                     error:
                         "Your current password is incorrect."
                 });
-            }
-
-            if (!await consumePasswordCode(req.session.userId, "change", verificationCode)) {
-                return res.status(400).json({ error: "That code is invalid, expired, or already used." });
             }
 
             const passwordHash =
@@ -1140,6 +1158,65 @@ app.post("/api/password/recovery/complete", rateLimit("password-recovery-complet
     } catch (error) {
         console.error("PASSWORD RECOVERY ERROR:", error);
         res.status(500).json({ error: "Could not reset the password." });
+    }
+});
+
+app.post("/api/me/recovery-codes", requireLogin, rateLimit("recovery-codes-create", 5, 60 * 60 * 1000), async (req, res) => {
+    const currentPassword = typeof req.body.current_password === "string" ? req.body.current_password : "";
+    if (!currentPassword) return res.status(400).json({ error: "Enter your current password to create recovery codes." });
+    try {
+        const result = await query("SELECT password_hash FROM users WHERE id = $1", [req.session.userId]);
+        if (!result.rows[0] || !await bcrypt.compare(currentPassword, result.rows[0].password_hash || "")) {
+            return res.status(401).json({ error: "Your current password is incorrect." });
+        }
+        const codes = generateRecoveryCodes();
+        await replaceRecoveryCodes(req.session.userId, codes);
+        res.json({ message: "Save these codes somewhere private. They are shown only once; creating a new set disables every old code.", codes });
+    } catch (error) {
+        console.error("RECOVERY CODE ISSUE ERROR:", error);
+        res.status(500).json({ error: "Could not create recovery codes." });
+    }
+});
+
+app.post("/api/password/recovery/code", rateLimit("password-recovery-code", 8, 15 * 60 * 1000), async (req, res) => {
+    const username = typeof req.body.username === "string" ? req.body.username.trim().toLowerCase() : "";
+    const code = typeof req.body.code === "string" ? req.body.code.trim() : "";
+    const newPassword = typeof req.body.new_password === "string" ? req.body.new_password : "";
+    if (!username || username.length > 64 || !/^[a-f0-9]{32}$/i.test(code.replace(/[-\s]/g, "")) || newPassword.length < 8 || Buffer.byteLength(newPassword, "utf8") > 72) {
+        return res.status(400).json({ error: "Enter your username, one unused recovery code, and a new password of at least eight characters." });
+    }
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+    const replacementCodes = generateRecoveryCodes();
+    const client = await pool.connect();
+    try {
+        await client.query("BEGIN");
+        const found = await client.query("SELECT id FROM users WHERE LOWER(username) = $1", [username]);
+        const userId = found.rows[0]?.id;
+        if (!userId) {
+            await client.query("ROLLBACK");
+            return res.status(400).json({ error: "The username or recovery code is incorrect, already used, or unavailable." });
+        }
+        const consumed = await client.query(`UPDATE password_recovery_codes SET used_at = CURRENT_TIMESTAMP
+            WHERE id = (SELECT id FROM password_recovery_codes WHERE user_id = $1 AND code_hash = $2 AND used_at IS NULL ORDER BY created_at DESC LIMIT 1 FOR UPDATE)
+            AND used_at IS NULL RETURNING id`, [userId, recoveryCodeHash(code)]);
+        if (consumed.rowCount !== 1) {
+            await client.query("ROLLBACK");
+            return res.status(400).json({ error: "The username or recovery code is incorrect, already used, or unavailable." });
+        }
+        await client.query("UPDATE users SET password_hash = $1 WHERE id = $2", [passwordHash, userId]);
+        await client.query("UPDATE password_recovery_codes SET used_at = CURRENT_TIMESTAMP WHERE user_id = $1 AND used_at IS NULL", [userId]);
+        for (const replacement of replacementCodes) {
+            await client.query("INSERT INTO password_recovery_codes (user_id, code_hash) VALUES ($1, $2)", [userId, recoveryCodeHash(replacement)]);
+        }
+        await client.query("DELETE FROM app_sessions WHERE sess->>'userId' = $1", [String(userId)]);
+        await client.query("COMMIT");
+        res.json({ message: "Password reset. Save this new set of recovery codes now; the old set has been disabled. You can then sign in.", codes: replacementCodes });
+    } catch (error) {
+        await client.query("ROLLBACK").catch(() => {});
+        console.error("OFFLINE PASSWORD RECOVERY ERROR:", error);
+        res.status(500).json({ error: "Could not reset the password." });
+    } finally {
+        client.release();
     }
 });
 

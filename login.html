@@ -172,15 +172,16 @@
 
             <details id="passwordRecovery" style="margin:18px 0;padding:14px;border:1px solid #ddd;border-radius:12px">
                 <summary>Reset a forgotten password</summary>
-                <label for="recoveryEmail">Account email</label>
-                <input id="recoveryEmail" type="email" autocomplete="email" required>
-                <button id="requestRecoveryCode" type="button" class="auth-submit">Email recovery code</button>
-                <label for="recoveryCode">Six-digit code</label>
-                <input id="recoveryCode" inputmode="numeric" autocomplete="one-time-code" maxlength="6">
+                <p>Use one of the backup codes you saved in Settings. Each code works once.</p>
+                <label for="recoveryUsername">Username</label>
+                <input id="recoveryUsername" autocomplete="username">
+                <label for="recoveryCode">Backup recovery code</label>
+                <input id="recoveryCode" autocomplete="off" autocapitalize="characters" spellcheck="false">
                 <label for="recoveryNewPassword">New password</label>
                 <input id="recoveryNewPassword" type="password" autocomplete="new-password" minlength="8">
                 <button id="completeRecovery" type="button" class="auth-submit">Reset password</button>
                 <p id="recoveryMessage" class="auth-message" role="status"></p>
+                <pre id="replacementRecoveryCodes" hidden style="white-space:pre-wrap;overflow-wrap:anywhere;padding:12px;background:#f3f5f8;border-radius:8px"></pre>
             </details>
 
 
@@ -307,36 +308,22 @@ form.addEventListener("submit", async function(event) {
 
 });
 
-async function passwordRecoveryRequest(path, payload) {
-    const response = await fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload) });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || "Request failed.");
-    return data;
-}
-
-document.getElementById("requestRecoveryCode").addEventListener("click", async event => {
-    const button = event.currentTarget;
-    const recoveryMessage = document.getElementById("recoveryMessage");
-    button.disabled = true;
-    try {
-        const data = await passwordRecoveryRequest("/api/password/recovery/request", { email: document.getElementById("recoveryEmail").value.trim() });
-        recoveryMessage.textContent = data.message;
-    } catch (error) { recoveryMessage.textContent = error.message; }
-    finally { button.disabled = false; }
-});
-
 document.getElementById("completeRecovery").addEventListener("click", async event => {
     const button = event.currentTarget;
     const recoveryMessage = document.getElementById("recoveryMessage");
     button.disabled = true;
     try {
-        const data = await passwordRecoveryRequest("/api/password/recovery/complete", {
-            email: document.getElementById("recoveryEmail").value.trim(),
+        const response = await fetch("/api/password/recovery/code", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+            username: document.getElementById("recoveryUsername").value.trim(),
             code: document.getElementById("recoveryCode").value.trim(),
             new_password: document.getElementById("recoveryNewPassword").value
-        });
+        }) });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) throw new Error(data.error || "Could not reset password.");
         recoveryMessage.textContent = data.message;
         document.getElementById("recoveryNewPassword").value = "";
+        document.getElementById("replacementRecoveryCodes").textContent = data.codes.join("\n");
+        document.getElementById("replacementRecoveryCodes").hidden = false;
     } catch (error) { recoveryMessage.textContent = error.message; }
     finally { button.disabled = false; }
 });

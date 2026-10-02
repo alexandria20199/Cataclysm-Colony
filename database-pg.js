@@ -135,6 +135,16 @@ async function initializeDatabase() {
         CREATE INDEX IF NOT EXISTS idx_password_codes_user_purpose
             ON password_verification_codes(user_id, purpose, created_at DESC);
 
+        CREATE TABLE IF NOT EXISTS password_recovery_codes (
+            id BIGSERIAL PRIMARY KEY,
+            user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            code_hash TEXT NOT NULL,
+            used_at TIMESTAMP,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        );
+        CREATE INDEX IF NOT EXISTS idx_password_recovery_codes_user
+            ON password_recovery_codes(user_id, created_at DESC);
+
         CREATE TABLE IF NOT EXISTS newsroom_messages (
             id BIGSERIAL PRIMARY KEY,
             sender_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
