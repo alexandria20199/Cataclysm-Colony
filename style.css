@@ -1445,7 +1445,7 @@ select:focus-visible {
 .theme-option.selected { border-color: #b5121b; box-shadow: inset 0 0 0 1px #b5121b; background: #fff5f5; }
 
 /* =========================================================
-   DARK ROBLOX THEME
+   DARK THEME
 ========================================================= */
 
 :root[data-theme="dark"] body {
