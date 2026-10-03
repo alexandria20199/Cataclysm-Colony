@@ -541,6 +541,36 @@ function renderArticle(article) {
         );
 
 
+    const canEditArticle =
+        currentUser &&
+        (
+            Number(currentUser.id) === Number(article.author_id) ||
+            currentUser.role === "owner" ||
+            currentUser.role === "admin"
+        );
+
+
+    const articleEditLink =
+        canEditArticle
+            ? `
+
+                <a
+                    class="article-edit-link"
+                    href="write.html?edit=${encodeURIComponent(
+                        article.id
+                    )}"
+                >
+                    ${
+                        currentUser.role === "owner"
+                            ? "Edit and publish"
+                            : "Request edit"
+                    }
+                </a>
+
+              `
+            : "";
+
+
     articleContainer.innerHTML = `
 
         <article class="article">
@@ -674,6 +704,9 @@ function renderArticle(article) {
                 >
                     Follow
                 </button>
+
+
+                ${articleEditLink}
 
 
             </div>

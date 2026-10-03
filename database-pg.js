@@ -56,6 +56,31 @@ async function initializeDatabase() {
             published_at TIMESTAMP
         );
 
+        CREATE TABLE IF NOT EXISTS article_edit_requests (
+            id BIGSERIAL PRIMARY KEY,
+            article_id INTEGER NOT NULL REFERENCES articles(id) ON DELETE CASCADE,
+            requested_by INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+            headline TEXT NOT NULL,
+            summary TEXT DEFAULT '',
+            body TEXT NOT NULL,
+            image TEXT DEFAULT '',
+            category TEXT DEFAULT '',
+            tags TEXT DEFAULT '',
+            status TEXT NOT NULL DEFAULT 'pending'
+                CHECK (status IN ('pending', 'approved', 'rejected')),
+            rejection_reason TEXT DEFAULT '',
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            reviewed_at TIMESTAMP,
+            reviewed_by INTEGER REFERENCES users(id) ON DELETE SET NULL
+        );
+        CREATE INDEX IF NOT EXISTS idx_article_edit_requests_pending
+            ON article_edit_requests(status, created_at);
+        CREATE INDEX IF NOT EXISTS idx_article_edit_requests_article
+            ON article_edit_requests(article_id, created_at DESC);
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_article_edit_requests_one_pending
+            ON article_edit_requests(article_id)
+            WHERE status = 'pending';
+
         CREATE TABLE IF NOT EXISTS comments (
             id SERIAL PRIMARY KEY,
             article_id INTEGER NOT NULL REFERENCES articles(id) ON DELETE CASCADE,

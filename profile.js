@@ -1192,6 +1192,32 @@ function renderArticles(
                 meta
             );
 
+            const canEditArticle =
+                isOwnProfile() ||
+                currentUser?.role === "admin" ||
+                currentUser?.role === "owner";
+
+            if (canEditArticle) {
+
+                const editLink =
+                    document.createElement("a");
+
+                editLink.className =
+                    "profile-edit-article";
+
+                editLink.href =
+                    `write.html?edit=${encodeURIComponent(
+                        article.id
+                    )}`;
+
+                editLink.textContent =
+                    currentUser?.role === "owner"
+                        ? "Edit and publish"
+                        : "Request edit";
+
+                articleElement.appendChild(editLink);
+            }
+
             if (isOwnProfile() || isOwner()) {
 
                 const deleteButton =

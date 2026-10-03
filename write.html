@@ -128,12 +128,12 @@
             </div>
 
 
-            <h1>
+            <h1 id="writerTitle">
                 Write an article
             </h1>
 
 
-            <p>
+            <p id="writerSubtitle">
                 Tell the story. Make it memorable.
                 Our editors will review it before publication.
             </p>
@@ -519,6 +519,7 @@
                     <button
                         type="submit"
                         class="primary-button"
+                        id="submitArticle"
                     >
                         Submit for review
                     </button>
@@ -847,8 +848,20 @@ const saveStatus =
 const formMessage =
     document.getElementById("formMessage");
 
+const writerTitle =
+    document.getElementById("writerTitle");
+
+const writerSubtitle =
+    document.getElementById("writerSubtitle");
+
+const submitArticle =
+    document.getElementById("submitArticle");
 
 let imageData = "";
+let editingArticleId =
+    new URLSearchParams(window.location.search)
+        .get("edit");
+let editorUser = null;
 
 
 
@@ -869,6 +882,14 @@ async function checkLogin() {
             window.location.href =
                 "login.html";
 
+            return;
+
+        }
+
+        editorUser = await response.json();
+
+        if (editingArticleId) {
+            await loadArticleForEditing();
         }
 
     } catch (error) {
@@ -881,6 +902,90 @@ async function checkLogin() {
 
 
 checkLogin();
+
+
+// ============================================================
+// LOAD A PUBLISHED ARTICLE FOR EDITING
+// ============================================================
+
+function setArticleImage(image) {
+
+    imageData = image || "";
+
+    if (!imageData) {
+        previewImage.removeAttribute("src");
+        imagePreview.classList.add("hidden");
+        imageUpload.classList.remove("hidden");
+        return;
+    }
+
+    previewImage.src = imageData;
+    imagePreview.classList.remove("hidden");
+    imageUpload.classList.add("hidden");
+}
+
+
+function updateCharacterCounts() {
+
+    document.getElementById("headlineCount").textContent =
+        headline.value.length;
+
+    document.getElementById("summaryCount").textContent =
+        summary.value.length;
+}
+
+
+async function loadArticleForEditing() {
+
+    try {
+
+        const response = await fetch(
+            `/api/articles/${encodeURIComponent(editingArticleId)}/editable`,
+            { credentials: "same-origin" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(
+                data.error || "This article is not available for editing."
+            );
+        }
+
+        const article = data.article;
+
+        headline.value = article.headline || "";
+        summary.value = article.summary || "";
+        body.innerHTML = article.body || "";
+        category.value = article.category || "";
+        tags.value = article.tags || "";
+        setArticleImage(article.image || "");
+        updateCharacterCounts();
+
+        const isOwner = editorUser?.role === "owner";
+
+        writerTitle.textContent = "Edit published article";
+        writerSubtitle.textContent = isOwner
+            ? "Your changes will update the live article when you publish them."
+            : "The current article stays live until the Owner reviews your changes.";
+
+        saveDraft.hidden = true;
+        submitArticle.textContent = isOwner
+            ? "Publish updates"
+            : "Submit edits for Owner review";
+        saveStatus.textContent = "Editing published article";
+
+    } catch (error) {
+
+        console.error("ARTICLE EDIT LOAD ERROR:", error);
+        showMessage(error.message, "error");
+        form.querySelectorAll("input, textarea, select, button, [contenteditable]")
+            .forEach(element => {
+                element.setAttribute("disabled", "disabled");
+                element.setAttribute("contenteditable", "false");
+            });
+    }
+}
 
 
 
@@ -1337,10 +1442,7 @@ form.addEventListener(
         }
 
 
-        const submitButton =
-            form.querySelector(
-                ".primary-button"
-            );
+        const submitButton = submitArticle;
 
 
         submitButton.disabled =
@@ -1354,7 +1456,11 @@ form.addEventListener(
 
             const response =
                 await fetch(
-                    "/api/articles",
+                    editingArticleId
+                        ? `/api/articles/${encodeURIComponent(
+                            editingArticleId
+                        )}/edit-request`
+                        : "/api/articles",
                     {
 
                         method:
@@ -1386,18 +1492,35 @@ form.addEventListener(
             }
 
 
-            saveStatus.textContent =
-                "Submitted";
+            if (editingArticleId) {
+
+                saveStatus.textContent =
+                    result.published ? "Published" : "Waiting for Owner review";
+
+                showMessage(
+                    result.message ||
+                    "Your article edit was submitted for the Owner’s review.",
+                    "success"
+                );
+
+                submitButton.textContent =
+                    result.published ? "Published" : "Edits submitted";
+
+            } else {
+
+                saveStatus.textContent =
+                    "Submitted";
 
 
-            showMessage(
-                "Article submitted! It is now waiting for editorial review.",
-                "success"
-            );
+                showMessage(
+                    "Article submitted! It is now waiting for editorial review.",
+                    "success"
+                );
 
 
-            submitButton.textContent =
-                "Submitted";
+                submitButton.textContent =
+                    "Submitted";
+            }
 
 
         } catch (error) {
@@ -1416,7 +1539,11 @@ form.addEventListener(
 
 
             submitButton.textContent =
-                "Submit for review";
+                editingArticleId
+                    ? (editorUser?.role === "owner"
+                        ? "Publish updates"
+                        : "Submit edits for Owner review")
+                    : "Submit for review";
 
         }
 

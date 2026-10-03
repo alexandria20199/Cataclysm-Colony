@@ -378,17 +378,19 @@ function normalizeTags(tags) {
 
 async function syncArticleTags(
     articleId,
-    tags
+    tags,
+    client = null
 ) {
 
     const normalized =
         normalizeTags(tags);
 
-    const clientResult =
-        await query("SELECT 1");
+    const run = client
+        ? client.query.bind(client)
+        : query;
 
     // Remove old relationships first.
-    await query(`
+    await run(`
         DELETE FROM article_tags
         WHERE article_id = $1
     `, [
@@ -397,7 +399,7 @@ async function syncArticleTags(
 
     for (const tag of normalized) {
 
-        await query(`
+        await run(`
             INSERT INTO tags (name)
             VALUES ($1)
             ON CONFLICT (name)
@@ -407,7 +409,7 @@ async function syncArticleTags(
         ]);
 
         const tagResult =
-            await query(`
+            await run(`
                 SELECT id
                 FROM tags
                 WHERE name = $1
@@ -420,7 +422,7 @@ async function syncArticleTags(
 
         if (row) {
 
-            await query(`
+            await run(`
                 INSERT INTO article_tags (
                     article_id,
                     tag_id
@@ -2320,6 +2322,353 @@ app.get(
 
 
 // ============================================================
+// EDIT A PUBLISHED ARTICLE
+// ============================================================
+
+app.get(
+    "/api/articles/:id/editable",
+    requireLogin,
+    async (req, res) => {
+
+        try {
+
+            const user = await getCurrentUser(req);
+
+            if (!user) {
+                return res.status(401).json({
+                    error: "You must be logged in."
+                });
+            }
+
+            const result = await query(`
+                SELECT
+                    id,
+                    author_id,
+                    headline,
+                    summary,
+                    body,
+                    image,
+                    category,
+                    tags,
+                    status,
+                    updated_at,
+                    published_at
+                FROM articles
+                WHERE id = $1
+                AND status = 'approved'
+            `, [req.params.id]);
+
+            const article = result.rows[0];
+
+            if (!article) {
+                return res.status(404).json({
+                    error: "Published article not found."
+                });
+            }
+
+            const canEditAnyArticle =
+                user &&
+                (user.role === "owner" || user.role === "admin");
+
+            if (
+                !canEditAnyArticle &&
+                Number(article.author_id) !== Number(req.session.userId)
+            ) {
+                return res.status(403).json({
+                    error: "You can only edit your own articles."
+                });
+            }
+
+            res.json({
+                article,
+                review_required: user.role !== "owner"
+            });
+
+        } catch (error) {
+
+            console.error("EDITABLE ARTICLE ERROR:", error);
+
+            res.status(500).json({
+                error: "Could not load this article for editing."
+            });
+        }
+    }
+);
+
+
+app.post(
+    "/api/articles/:id/edit-request",
+    requireLogin,
+    async (req, res) => {
+
+        const {
+            headline,
+            summary,
+            body,
+            image,
+            category,
+            tags
+        } = req.body;
+
+        const cleanHeadline =
+            typeof headline === "string" ? headline.trim() : "";
+
+        const cleanSummary =
+            typeof summary === "string" ? summary : "";
+
+        const cleanBody =
+            typeof body === "string" ? body : "";
+
+        const cleanCategory =
+            typeof category === "string" ? category.trim() : "";
+
+        if (!cleanHeadline) {
+            return res.status(400).json({
+                error: "An article needs a headline."
+            });
+        }
+
+        const plainBody = cleanBody
+            .replace(/<[^>]*>/g, "")
+            .trim();
+
+        if (!plainBody) {
+            return res.status(400).json({
+                error: "Your article cannot be empty."
+            });
+        }
+
+        if (plainBody.length < 30) {
+            return res.status(400).json({
+                error: "Your article needs more content."
+            });
+        }
+
+        if (!cleanCategory) {
+            return res.status(400).json({
+                error: "Please select a category."
+            });
+        }
+
+        try {
+
+            const user = await getCurrentUser(req);
+
+            if (!user) {
+                return res.status(401).json({
+                    error: "You must be logged in."
+                });
+            }
+
+            const articleResult = await query(`
+                SELECT
+                    id,
+                    author_id,
+                    headline,
+                    image,
+                    status
+                FROM articles
+                WHERE id = $1
+                AND status = 'approved'
+            `, [req.params.id]);
+
+            const article = articleResult.rows[0];
+
+            if (!article) {
+                return res.status(404).json({
+                    error: "Published article not found."
+                });
+            }
+
+            const canEditAnyArticle =
+                user &&
+                (user.role === "owner" || user.role === "admin");
+
+            if (
+                !canEditAnyArticle &&
+                Number(article.author_id) !== Number(req.session.userId)
+            ) {
+                return res.status(403).json({
+                    error: "You can only edit your own articles."
+                });
+            }
+
+            const normalizedTags = normalizeTags(tags);
+            const savedImage = await hostedImage(
+                typeof image === "string" ? image : article.image
+            );
+
+            if (user.role === "owner") {
+
+                const client = await pool.connect();
+
+                try {
+
+                    await client.query("BEGIN");
+
+                    const updateResult = await client.query(`
+                        UPDATE articles
+                        SET
+                            headline = $1,
+                            summary = $2,
+                            body = $3,
+                            image = $4,
+                            category = $5,
+                            tags = $6,
+                            rejection_reason = '',
+                            updated_at = CURRENT_TIMESTAMP
+                        WHERE id = $7
+                        AND status = 'approved'
+                        RETURNING id
+                    `, [
+                        cleanHeadline,
+                        cleanSummary,
+                        cleanBody,
+                        savedImage,
+                        cleanCategory,
+                        normalizedTags.join(", "),
+                        article.id
+                    ]);
+
+                    if (!updateResult.rows[0]) {
+                        throw new Error("Article is no longer available.");
+                    }
+
+                    await syncArticleTags(
+                        article.id,
+                        normalizedTags,
+                        client
+                    );
+
+                    const supersededResult = await client.query(`
+                        UPDATE article_edit_requests
+                        SET
+                            status = 'rejected',
+                            rejection_reason = 'The Owner updated this article directly.',
+                            reviewed_at = CURRENT_TIMESTAMP,
+                            reviewed_by = $1
+                        WHERE article_id = $2
+                        AND status = 'pending'
+                        RETURNING requested_by
+                    `, [user.id, article.id]);
+
+                    await client.query("COMMIT");
+
+                    for (const request of supersededResult.rows) {
+                        try {
+                            await createNotification(
+                                request.requested_by,
+                                "article_edit",
+                                "Article updated by the Owner",
+                                `The Owner updated “${article.headline}” directly, so your pending edit was closed.`,
+                                `article.html?id=${article.id}`
+                            );
+                        } catch (notificationError) {
+                            console.error("DIRECT EDIT NOTIFICATION ERROR:", notificationError);
+                        }
+                    }
+
+                    return res.json({
+                        message: "Article updated and published.",
+                        article_id: article.id,
+                        status: "approved",
+                        published: true
+                    });
+
+                } catch (error) {
+
+                    await client.query("ROLLBACK");
+                    throw error;
+
+                } finally {
+
+                    client.release();
+                }
+            }
+
+            const pendingResult = await query(`
+                SELECT id
+                FROM article_edit_requests
+                WHERE article_id = $1
+                AND status = 'pending'
+                LIMIT 1
+            `, [article.id]);
+
+            if (pendingResult.rows[0]) {
+                return res.status(409).json({
+                    error: "An edit for this article is already waiting for the Owner’s review."
+                });
+            }
+
+            const requestResult = await query(`
+                INSERT INTO article_edit_requests (
+                    article_id,
+                    requested_by,
+                    headline,
+                    summary,
+                    body,
+                    image,
+                    category,
+                    tags
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+                RETURNING id
+            `, [
+                article.id,
+                user.id,
+                cleanHeadline,
+                cleanSummary,
+                cleanBody,
+                savedImage,
+                cleanCategory,
+                normalizedTags.join(", ")
+            ]);
+
+            const ownerResult = await query(`
+                SELECT id
+                FROM users
+                WHERE role = 'owner'
+                LIMIT 1
+            `);
+
+            const owner = ownerResult.rows[0];
+
+            if (owner) {
+                await createNotification(
+                    owner.id,
+                    "article_edit",
+                    "Article edit waiting for review",
+                    `${user.username} requested an edit to “${article.headline}”.`,
+                    "admin.html"
+                );
+            }
+
+            res.status(201).json({
+                message: "Your edit is waiting for the Owner’s review.",
+                article_id: article.id,
+                edit_request_id: requestResult.rows[0].id,
+                status: "pending"
+            });
+
+        } catch (error) {
+
+            console.error("ARTICLE EDIT REQUEST ERROR:", error);
+
+            if (error.code === "23505") {
+                return res.status(409).json({
+                    error: "An edit for this article is already waiting for the Owner’s review."
+                });
+            }
+
+            res.status(500).json({
+                error: "Could not submit your article edit."
+            });
+        }
+    }
+);
+
+
+// ============================================================
 // DELETE MY ARTICLE
 // ============================================================
 
@@ -2419,6 +2768,257 @@ app.get(
         }
     }
 );
+
+// ============================================================
+// OWNER — PUBLISHED ARTICLE EDIT REQUESTS
+// ============================================================
+
+app.get(
+    "/api/owner/article-edits",
+    requireOwner,
+    async (req, res) => {
+
+        try {
+
+            const result = await query(`
+                SELECT
+                    requests.id,
+                    requests.article_id,
+                    requests.requested_by,
+                    requests.headline,
+                    requests.summary,
+                    requests.body,
+                    requests.image,
+                    requests.category,
+                    requests.tags,
+                    requests.created_at,
+                    articles.headline AS current_headline,
+                    articles.summary AS current_summary,
+                    articles.body AS current_body,
+                    articles.image AS current_image,
+                    articles.category AS current_category,
+                    articles.tags AS current_tags,
+                    authors.username AS author_username,
+                    requesters.username AS requested_by_username,
+                    requesters.profile_picture AS requested_by_profile_picture
+                FROM article_edit_requests AS requests
+                JOIN articles
+                    ON articles.id = requests.article_id
+                JOIN users AS authors
+                    ON authors.id = articles.author_id
+                JOIN users AS requesters
+                    ON requesters.id = requests.requested_by
+                WHERE requests.status = 'pending'
+                ORDER BY requests.created_at ASC
+            `);
+
+            res.json(result.rows);
+
+        } catch (error) {
+
+            console.error("OWNER EDIT REQUESTS ERROR:", error);
+
+            res.status(500).json({
+                error: "Could not load article edit requests."
+            });
+        }
+    }
+);
+
+
+app.post(
+    "/api/owner/article-edits/:id/approve",
+    requireOwner,
+    async (req, res) => {
+
+        const client = await pool.connect();
+
+        try {
+
+            await client.query("BEGIN");
+
+            const requestResult = await client.query(`
+                SELECT
+                    id,
+                    article_id,
+                    requested_by,
+                    headline,
+                    summary,
+                    body,
+                    image,
+                    category,
+                    tags
+                FROM article_edit_requests
+                WHERE id = $1
+                AND status = 'pending'
+                FOR UPDATE
+            `, [req.params.id]);
+
+            const editRequest = requestResult.rows[0];
+
+            if (!editRequest) {
+                await client.query("ROLLBACK");
+                return res.status(404).json({
+                    error: "Pending edit request not found."
+                });
+            }
+
+            const articleResult = await client.query(`
+                UPDATE articles
+                SET
+                    headline = $1,
+                    summary = $2,
+                    body = $3,
+                    image = $4,
+                    category = $5,
+                    tags = $6,
+                    rejection_reason = '',
+                    updated_at = CURRENT_TIMESTAMP
+                WHERE id = $7
+                AND status = 'approved'
+                RETURNING id
+            `, [
+                editRequest.headline,
+                editRequest.summary,
+                editRequest.body,
+                editRequest.image,
+                editRequest.category,
+                editRequest.tags,
+                editRequest.article_id
+            ]);
+
+            if (!articleResult.rows[0]) {
+                throw new Error("Article is no longer published.");
+            }
+
+            await syncArticleTags(
+                editRequest.article_id,
+                editRequest.tags,
+                client
+            );
+
+            await client.query(`
+                UPDATE article_edit_requests
+                SET
+                    status = 'approved',
+                    rejection_reason = '',
+                    reviewed_at = CURRENT_TIMESTAMP,
+                    reviewed_by = $1
+                WHERE id = $2
+            `, [req.currentUser.id, editRequest.id]);
+
+            await client.query("COMMIT");
+
+            try {
+                await createNotification(
+                    editRequest.requested_by,
+                    "article_edit",
+                    "Your article edit was approved",
+                    `Your changes to “${editRequest.headline}” are now live.`,
+                    `article.html?id=${editRequest.article_id}`
+                );
+            } catch (notificationError) {
+                console.error("EDIT APPROVAL NOTIFICATION ERROR:", notificationError);
+            }
+
+            res.json({
+                message: "Article edit approved and published."
+            });
+
+        } catch (error) {
+
+            try {
+                await client.query("ROLLBACK");
+            } catch (rollbackError) {
+                console.error("EDIT APPROVAL ROLLBACK ERROR:", rollbackError);
+            }
+
+            console.error("EDIT APPROVAL ERROR:", error);
+
+            res.status(500).json({
+                error: "Could not approve this article edit."
+            });
+
+        } finally {
+
+            client.release();
+        }
+    }
+);
+
+
+app.post(
+    "/api/owner/article-edits/:id/reject",
+    requireOwner,
+    async (req, res) => {
+
+        const reason =
+            typeof req.body.reason === "string"
+                ? req.body.reason.trim()
+                : "";
+
+        if (!reason || reason.length > 2000) {
+            return res.status(400).json({
+                error: "Provide a rejection reason of at most 2,000 characters."
+            });
+        }
+
+        try {
+
+            const result = await query(`
+                UPDATE article_edit_requests
+                SET
+                    status = 'rejected',
+                    rejection_reason = $1,
+                    reviewed_at = CURRENT_TIMESTAMP,
+                    reviewed_by = $2
+                WHERE id = $3
+                AND status = 'pending'
+                RETURNING
+                    requested_by,
+                    article_id,
+                    headline
+            `, [
+                reason,
+                req.currentUser.id,
+                req.params.id
+            ]);
+
+            const editRequest = result.rows[0];
+
+            if (!editRequest) {
+                return res.status(404).json({
+                    error: "Pending edit request not found."
+                });
+            }
+
+            try {
+                await createNotification(
+                    editRequest.requested_by,
+                    "article_edit",
+                    "Your article edit needs changes",
+                    reason,
+                    `write.html?edit=${editRequest.article_id}`
+                );
+            } catch (notificationError) {
+                console.error("EDIT REJECTION NOTIFICATION ERROR:", notificationError);
+            }
+
+            res.json({
+                message: "Article edit request rejected."
+            });
+
+        } catch (error) {
+
+            console.error("EDIT REJECTION ERROR:", error);
+
+            res.status(500).json({
+                error: "Could not reject this article edit."
+            });
+        }
+    }
+);
+
 
 // ============================================================
 // ADMIN — PENDING SUBMISSIONS

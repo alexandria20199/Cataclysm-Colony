@@ -447,6 +447,66 @@
 
 
     <!-- =====================================================
+         PUBLISHED ARTICLE EDITS
+    ====================================================== -->
+
+    <section
+        id="articleEditRequestsSection"
+        class="admin-section article-edit-requests-section"
+        hidden
+    >
+
+        <div class="admin-section-heading">
+
+            <div>
+
+                <span class="section-kicker">
+                    OWNER REVIEW
+                </span>
+
+                <h2>
+                    Published Article Edits
+                </h2>
+
+                <p>
+                    Review requested changes before they replace a live article.
+                </p>
+
+            </div>
+
+
+            <button
+                id="refreshArticleEditsButton"
+                class="admin-refresh"
+                type="button"
+            >
+                Refresh Edits
+            </button>
+
+        </div>
+
+
+        <div
+            id="articleEditRequestList"
+            class="article-edit-request-list"
+        >
+
+            <div class="admin-loading">
+
+                <div class="admin-spinner"></div>
+
+                <p>
+                    Loading edit requests...
+                </p>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =====================================================
          ARTICLE ARCHIVE
     ====================================================== -->
 
@@ -731,6 +791,12 @@ const refreshUsersButton =
 
 const articleArchiveList =
     document.getElementById("articleArchiveList");
+
+const articleEditRequestsSection =
+    document.getElementById("articleEditRequestsSection");
+
+const articleEditRequestList =
+    document.getElementById("articleEditRequestList");
 
 let editorialUser = null;
 let userManagementRole = "admin";
@@ -1653,6 +1719,231 @@ async function rejectArticle(
 
     }
 
+}
+
+
+/* ============================================================
+   OWNER ARTICLE EDIT REQUESTS
+============================================================ */
+
+function excerptFromHTML(value, limit = 260) {
+
+    const text = document.createElement("div");
+    text.innerHTML = String(value || "");
+
+    const excerpt = (text.textContent || text.innerText || "")
+        .replace(/\s+/g, " ")
+        .trim();
+
+    return excerpt.length > limit
+        ? `${excerpt.slice(0, limit).trim()}…`
+        : excerpt || "No article text provided.";
+}
+
+
+async function loadArticleEditRequests() {
+
+    if (!articleEditRequestsSection || !articleEditRequestList) {
+        return;
+    }
+
+    try {
+
+        const userResponse = await fetch("/api/me");
+
+        if (userResponse.status === 401) {
+            window.location.href = "login.html";
+            return;
+        }
+
+        const user = await userResponse.json();
+
+        if (!userResponse.ok || user.role !== "owner") {
+            articleEditRequestsSection.hidden = true;
+            return;
+        }
+
+        editorialUser = user;
+        articleEditRequestsSection.hidden = false;
+        articleEditRequestList.innerHTML = `
+            <div class="admin-loading">
+                <div class="admin-spinner"></div>
+                <p>Loading edit requests...</p>
+            </div>
+        `;
+
+        const response = await fetch("/api/owner/article-edits");
+        const requests = await response.json();
+
+        if (!response.ok) {
+            throw new Error(requests.error || "Could not load article edit requests.");
+        }
+
+        renderArticleEditRequests(requests);
+
+    } catch (error) {
+
+        console.error("ARTICLE EDIT REQUEST LOAD ERROR:", error);
+
+        articleEditRequestsSection.hidden = false;
+        articleEditRequestList.innerHTML = `
+            <div class="admin-empty error-state">
+                <div class="empty-icon">!</div>
+                <h3>Could not load article edits.</h3>
+                <p>${escapeHTML(error.message)}</p>
+                <button class="admin-refresh" type="button" onclick="loadArticleEditRequests()">Try again</button>
+            </div>
+        `;
+    }
+}
+
+
+function renderArticleEditRequests(requests) {
+
+    if (!requests.length) {
+        articleEditRequestList.innerHTML = `
+            <div class="admin-empty">
+                <div class="empty-icon">✓</div>
+                <h3>No published article edits are waiting.</h3>
+                <p>The live newsroom is up to date.</p>
+            </div>
+        `;
+        return;
+    }
+
+    articleEditRequestList.innerHTML = requests.map(request => {
+
+        const requestId = Number(request.id);
+        const currentImage = request.current_image
+            ? `<img src="${escapeHTML(request.current_image)}" alt="Current article image">`
+            : "<span>No image</span>";
+        const proposedImage = request.image
+            ? `<img src="${escapeHTML(request.image)}" alt="Proposed article image">`
+            : "<span>No image</span>";
+
+        return `
+            <article class="article-edit-request-card" data-request-id="${requestId}">
+                <div class="article-edit-request-topline">
+                    <span class="submission-status">OWNER REVIEW</span>
+                    <span class="submission-date">${escapeHTML(formatDate(request.created_at))}</span>
+                </div>
+
+                <p class="article-edit-request-meta">
+                    Requested by <strong>${escapeHTML(request.requested_by_username || "Unknown user")}</strong>
+                    · Article author: <strong>${escapeHTML(request.author_username || "Unknown reporter")}</strong>
+                </p>
+
+                <div class="article-edit-comparison">
+                    <section>
+                        <span class="article-edit-label">CURRENT LIVE ARTICLE</span>
+                        <h3>${escapeHTML(request.current_headline || "Untitled article")}</h3>
+                        <p>${escapeHTML(request.current_summary || "No summary")}</p>
+                        <div class="article-edit-image">${currentImage}</div>
+                        <small>${escapeHTML(request.current_category || "Uncategorized")} · ${escapeHTML(request.current_tags || "No tags")}</small>
+                        <details>
+                            <summary>Read current article text</summary>
+                            <p>${escapeHTML(excerptFromHTML(request.current_body))}</p>
+                        </details>
+                    </section>
+
+                    <section class="article-edit-proposed">
+                        <span class="article-edit-label">PROPOSED UPDATE</span>
+                        <h3>${escapeHTML(request.headline || "Untitled article")}</h3>
+                        <p>${escapeHTML(request.summary || "No summary")}</p>
+                        <div class="article-edit-image">${proposedImage}</div>
+                        <small>${escapeHTML(request.category || "Uncategorized")} · ${escapeHTML(request.tags || "No tags")}</small>
+                        <details>
+                            <summary>Read proposed article text</summary>
+                            <p>${escapeHTML(excerptFromHTML(request.body))}</p>
+                        </details>
+                    </section>
+                </div>
+
+                <div class="article-edit-request-actions">
+                    <button class="approve-button" type="button" onclick="approveArticleEdit(${requestId}, this)">
+                        Approve and publish update
+                    </button>
+                    <textarea id="edit-reason-${requestId}" maxlength="2000" placeholder="Reason if you reject this edit..."></textarea>
+                    <button class="reject-button" type="button" onclick="rejectArticleEdit(${requestId}, this)">
+                        Reject update
+                    </button>
+                </div>
+            </article>
+        `;
+    }).join("");
+}
+
+
+async function approveArticleEdit(id, button) {
+
+    if (!confirm("Approve this update and replace the live article?")) {
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Publishing...";
+
+    try {
+
+        const response = await fetch(`/api/owner/article-edits/${id}/approve`, {
+            method: "POST"
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Could not approve this article edit.");
+        }
+
+        showMessage(data.message || "Article edit approved and published.", "success");
+        await Promise.all([loadArticleEditRequests(), loadArticleArchive()]);
+
+    } catch (error) {
+
+        console.error("ARTICLE EDIT APPROVAL ERROR:", error);
+        button.disabled = false;
+        button.textContent = "Approve and publish update";
+        showMessage(error.message, "error");
+    }
+}
+
+
+async function rejectArticleEdit(id, button) {
+
+    const reasonInput = document.getElementById(`edit-reason-${id}`);
+    const reason = reasonInput?.value.trim() || "";
+
+    if (!reason) {
+        showMessage("Write a reason before rejecting an article edit.", "error");
+        reasonInput?.focus();
+        return;
+    }
+
+    button.disabled = true;
+    button.textContent = "Rejecting...";
+
+    try {
+
+        const response = await fetch(`/api/owner/article-edits/${id}/reject`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ reason })
+        });
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.error || "Could not reject this article edit.");
+        }
+
+        showMessage(data.message || "Article edit request rejected.", "success");
+        await loadArticleEditRequests();
+
+    } catch (error) {
+
+        console.error("ARTICLE EDIT REJECTION ERROR:", error);
+        button.disabled = false;
+        button.textContent = "Reject update";
+        showMessage(error.message, "error");
+    }
 }
 
 
@@ -2704,6 +2995,11 @@ document.getElementById("refreshArticleArchiveButton")?.addEventListener(
     loadArticleArchive
 );
 
+document.getElementById("refreshArticleEditsButton")?.addEventListener(
+    "click",
+    loadArticleEditRequests
+);
+
 announcementForm?.addEventListener("submit", sendAnnouncement);
 
 announcementImageInput?.addEventListener("change", () => {
@@ -2733,6 +3029,8 @@ loadHomepageCuration();
 loadArticleArchive();
 
 loadAnnouncementAccess();
+
+loadArticleEditRequests();
 
 </script>
 
